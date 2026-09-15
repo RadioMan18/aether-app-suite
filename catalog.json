@@ -75,6 +75,21 @@
       "rating": 4.4,
       "downloads": 540,
       "changelog": "Initial plugin catalog release."
+    },
+    {
+      "id": "contacts",
+      "name": "Contacts",
+      "version": "0.1.0",
+      "category": "productivity",
+      "icon": "🧘",
+      "description": "Contact tracker with interaction notes.",
+      "author": "Aether",
+      "permissions": ["db:read", "db:write"],
+      "downloadUrl": "https://github.com/RadioMan18/aether-app-plugins/releases/download/v0.1.0/contacts.zip",
+      "checksum": "sha256:e365a1504768a482bb8836216e6e75014425d7b0498ce89433f17d0898171d05",
+      "rating": 4.6,
+      "downloads": 570,
+      "changelog": "Initial plugin catalog release."
     }
   ]
 }
