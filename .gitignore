@@ -36,3 +36,7 @@ coverage/
 # Misc
 *.orig
 *.rej
+
+# Plugin build artifacts
+plugins/*/dist/
+plugins/*/*.zip
