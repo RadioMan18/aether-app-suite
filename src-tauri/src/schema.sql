@@ -140,5 +140,15 @@ CREATE TABLE IF NOT EXISTS kanban_columns (
 
 CREATE INDEX IF NOT EXISTS idx_kanban_columns_column ON kanban_columns(column);
 
+CREATE TABLE IF NOT EXISTS notes (
+    id TEXT PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_notes_updated_at ON notes(updated_at);
+
 UPDATE journal_entries SET id = lower(hex(randomblob(16))) WHERE id IS NULL;
 UPDATE todos SET id = lower(hex(randomblob(16))) WHERE id IS NULL;

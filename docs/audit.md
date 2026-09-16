@@ -137,7 +137,7 @@
 **Details**:
 - Added `keyring = "2"` and `zeroize = { version = "1.5", features = ["alloc"] }` to `src-tauri/Cargo.toml`
 - Refactored `src-tauri/src/database.rs` to use `CredentialManager` abstraction backed by `keyring` crate
-- Removed plaintext `db.key` file storage; key is now stored in Windows Credential Manager under service `aether-app-suite`
+- Removed plaintext `db.key` file storage; key is now stored in Windows Credential Manager under service `nidus`
 - Added `Database::initialize_new` for first-time setup: generates 32-byte key, stores hex-encoded key in credential manager, opens DB
 - Added `Database::open` to retrieve key from credential manager and open existing encrypted DB
 - Key material is zeroized in memory via `zeroize::Zeroize` after PRAGMA key is set and after `initialize_new` returns
@@ -186,7 +186,7 @@
 - Registered `ipc` module in `lib.rs` and added commands to invoke handler
 - Updated `src/components/PluginSandbox.tsx` with postMessage bridge using `invoke("plugin_ipc", ...)`
 - Updated `src/components/Shell/MainContent.tsx` to pass `plugin` manifest to `PluginSandbox`
-- Created test plugin HTML at `%APPDATA%/aether/appsuite/plugins/journal/index.html` with `db:query` and `db:execute` test buttons
+- Created test plugin HTML at `%APPDATA%/nidus/appsuite/plugins/journal/index.html` with `db:query` and `db:execute` test buttons
 - Verified: `cargo check` passes with 0 errors, `cargo clippy -D warnings` passes with 0 warnings, `cargo fmt` passes
 - Fixed clippy warnings: redundant closures replaced with function pointers, removed useless `.into()` conversion
 - Fixed `query_map` closure error type compatibility by using `row.get_ref(i)?` directly
@@ -251,8 +251,8 @@
 - Updated `src-tauri/src/commands.rs` with `seed_builtin_plugins` command
 - Updated `src-tauri/src/lib.rs` to register `seed_builtin_plugins` in invoke handler
 - Updated `src/App.tsx` to call `seed_builtin_plugins` on startup
-- Updated `open-ui.bat` to set `AETHER_PLUGIN_DIR` for development plugin loading
-- Updated `src-tauri/src/protocol.rs` to support `AETHER_PLUGIN_DIR` environment variable for dev mode
+- Updated `open-ui.bat` to set `NIDUS_PLUGIN_DIR` for development plugin loading
+- Updated `src-tauri/src/protocol.rs` to support `NIDUS_PLUGIN_DIR` environment variable for dev mode
 - Verified: `cargo check` passes with 0 errors, `cargo clippy -D warnings` passes with 0 warnings, `cargo fmt` passes
 - Frontend checks: TypeScript typecheck passes, ESLint passes with 0 errors
 - All source files under 400 lines (largest: PluginStore.tsx at 183 lines)

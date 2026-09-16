@@ -56,13 +56,33 @@ const MOCK_PLUGINS: PluginManifest[] = [
 
 function App() {
   const shell = useShellState(MOCK_PLUGINS);
-  const { catalogItems, installedPlugins } = usePluginManager();
+  const { catalogItems, installedPlugins, installPlugin, uninstallPlugin, error } = usePluginManager();
   const [clipboardStreaming, setClipboardStreaming] = useState(false);
+  const [visiblePlugins, setVisiblePlugins] = useState<PluginManifest[]>([...MOCK_PLUGINS]);
 
-  const visiblePlugins = useMemo(() => {
+  useEffect(() => {
     const installedIds = new Set(installedPlugins.map((p) => p.id));
-    return MOCK_PLUGINS.filter((p) => p.builtin || installedIds.has(p.id));
-  }, [installedPlugins]);
+    const catalogMap = new Map(catalogItems.map((item) => [item.id, item]));
+    const plugins: PluginManifest[] = [...MOCK_PLUGINS];
+
+    for (const id of installedIds) {
+      if (!plugins.some((p) => p.id === id)) {
+        const catalogItem = catalogMap.get(id);
+        if (catalogItem) {
+          plugins.push({
+            id: catalogItem.id,
+            name: catalogItem.name,
+            version: catalogItem.version,
+            icon: catalogItem.icon,
+            ui: { activityBar: true },
+            sandboxed: true,
+          });
+        }
+      }
+    }
+
+    setVisiblePlugins(plugins);
+  }, [installedPlugins, catalogItems]);
 
   useEffect(() => {
     const seed = async () => {
@@ -106,12 +126,14 @@ function App() {
   );
 
   const storeItems = catalogItems.length > 0 ? catalogItems : [];
+  console.log("[App] render storeItems:", storeItems.map((i) => i.id + ":" + i.installed).join(","));
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-canvas text-text-primary">
       <CustomTitleBar />
       <div className="flex flex-1 overflow-hidden">
         <ActivityBar
+          key={visiblePlugins.map((p) => p.id).join(",")}
           plugins={visiblePlugins}
           activePluginId={shell.activePluginId}
           onPluginSelect={shell.setActivePluginId}
@@ -125,7 +147,13 @@ function App() {
           plugins={visiblePlugins}
         />
         {activePlugin?.id === "plugin-store" ? (
-          <PluginStore items={storeItems} />
+          <PluginStore
+            key={storeItems.map((i) => i.id + ":" + i.installed).join(",")}
+            items={storeItems}
+            installPlugin={installPlugin}
+            uninstallPlugin={uninstallPlugin}
+            error={error}
+          />
         ) : (
           <MainContent activePlugin={activePlugin} />
         )}

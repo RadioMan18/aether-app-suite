@@ -1,4 +1,4 @@
-import type { AetherRequestPayload, AetherResponse } from "./types";
+import type { NidusRequestPayload, NidusResponse } from "./types";
 
 type MessageHandler = (message: MessageEvent) => void;
 
@@ -24,9 +24,9 @@ function setupListener(): MessageHandler {
   return (event: MessageEvent) => {
     const message = event.data;
     if (!message || typeof message !== "object") return;
-    if (message.type !== "aether:response") return;
+    if (message.type !== "nidus:response") return;
 
-    const { requestId: rid, result } = message as { requestId: string; result?: AetherResponse };
+    const { requestId: rid, result } = message as { requestId: string; result?: NidusResponse };
     if (!rid || !result) return;
 
     const pending = pendingRequests.get(rid);
@@ -52,11 +52,11 @@ function ensureListener(): MessageHandler {
   return listener;
 }
 
-export function sendRequest<T>(payload: AetherRequestPayload, timeout = DEFAULT_TIMEOUT): Promise<T> {
+export function sendRequest<T>(payload: NidusRequestPayload, timeout = DEFAULT_TIMEOUT): Promise<T> {
   ensureListener();
   const { id, promise } = createPromise<T>();
 
-  window.parent.postMessage({ type: "aether:request", requestId: id, payload }, "*");
+  window.parent.postMessage({ type: "nidus:request", requestId: id, payload }, "*");
 
   const timer = setTimeout(() => {
     if (pendingRequests.has(id)) {

@@ -17,7 +17,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   componentDidCatch(error: Error, errorInfo: { componentStack: string }) {
-    console.error("Aether UI error:", error, errorInfo.componentStack);
+    console.error("Nidus UI error:", error, errorInfo.componentStack);
   }
 
   render() {

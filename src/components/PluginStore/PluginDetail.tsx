@@ -88,7 +88,11 @@ export function PluginDetail({ item, onClose, onInstall, onUninstall }: PluginDe
           <div className="flex items-center gap-3">
             {item.updateAvailable && (
               <button
-                onClick={onInstall}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log("[PluginDetail] Update click:", item.id);
+                  onInstall();
+                }}
                 className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-canvas transition-colors duration-150 hover:bg-accent-hover"
               >
                 <RefreshCw className="h-4 w-4" />
@@ -96,7 +100,11 @@ export function PluginDetail({ item, onClose, onInstall, onUninstall }: PluginDe
               </button>
             )}
             <button
-              onClick={onUninstall}
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log("[PluginDetail] Uninstall click:", item.id);
+                onUninstall();
+              }}
               className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-danger/10 px-4 py-2 text-sm font-medium text-danger transition-colors duration-150 hover:bg-danger/20"
             >
               <Trash2 className="h-4 w-4" />
@@ -105,7 +113,11 @@ export function PluginDetail({ item, onClose, onInstall, onUninstall }: PluginDe
           </div>
         ) : (
           <button
-            onClick={onInstall}
+            onClick={(e) => {
+              e.stopPropagation();
+              console.log("[PluginDetail] Install click:", item.id);
+              onInstall();
+            }}
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-canvas transition-colors duration-150 hover:bg-accent-hover"
           >
             <Download className="h-4 w-4" />

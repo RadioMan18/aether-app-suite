@@ -23,15 +23,15 @@ export function PluginSandbox({ src, title, plugin }: PluginSandboxProps) {
     const handleMessage = async (event: MessageEvent) => {
       const message = event.data;
       if (!message || typeof message !== "object") return;
-      if (message.type === "aether:plugin-mounted") {
+      if (message.type === "nidus:plugin-mounted") {
         console.info(`[PluginSandbox:${plugin.id}] React root mounted`, message.details);
         return;
       }
-      if (message.type === "aether:plugin-error") {
+      if (message.type === "nidus:plugin-error") {
         console.error(`[PluginSandbox:${plugin.id}]`, message.error);
         return;
       }
-      if (message.type !== "aether:request") return;
+      if (message.type !== "nidus:request") return;
 
       const { requestId, payload } = message;
 
@@ -48,7 +48,7 @@ export function PluginSandbox({ src, title, plugin }: PluginSandboxProps) {
 
         iframe.contentWindow?.postMessage(
           {
-            type: "aether:response",
+            type: "nidus:response",
             requestId,
             result: response,
           },
@@ -57,7 +57,7 @@ export function PluginSandbox({ src, title, plugin }: PluginSandboxProps) {
       } catch (error) {
         iframe.contentWindow?.postMessage(
           {
-            type: "aether:response",
+            type: "nidus:response",
             requestId,
             error: error instanceof Error ? error.message : String(error),
           },

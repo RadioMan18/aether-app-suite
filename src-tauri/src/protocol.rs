@@ -96,7 +96,7 @@ impl PluginProtocol {
     }
 
     fn dev_plugins_dir() -> Option<PathBuf> {
-        std::env::var("AETHER_PLUGIN_DIR").ok().map(PathBuf::from)
+        std::env::var("NIDUS_PLUGIN_DIR").ok().map(PathBuf::from)
     }
 
     fn workspace_plugins_dir() -> Option<PathBuf> {

@@ -1,9 +1,9 @@
-export interface AetherRequestPayload {
+export interface NidusRequestPayload {
   type: "db:query" | "db:execute" | "broker:request";
   params?: Record<string, unknown>;
 }
 
-export interface AetherResponse<T = unknown> {
+export interface NidusResponse<T = unknown> {
   id: string;
   success: boolean;
   data?: T;

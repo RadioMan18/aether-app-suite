@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { Input } from "@/lib/design-system/components";
 import { Search } from "lucide-react";
 import { usePluginStore } from "@/hooks/usePluginStore";
-import { usePluginManager } from "@/hooks/usePluginManager";
 import type { StoreItem, StoreCategory, StoreTab } from "@/types/plugin-store";
 import { PluginCard } from "./PluginCard";
 import { PluginDetail } from "./PluginDetail";
@@ -23,9 +22,14 @@ const TABS: { value: StoreTab; label: string }[] = [
 
 interface PluginStoreProps {
   items: StoreItem[];
+  installPlugin: (item: StoreItem) => Promise<void>;
+  uninstallPlugin: (id: string) => Promise<void>;
+  error: string | null;
 }
 
-export function PluginStore({ items }: PluginStoreProps) {
+export function PluginStore({ items, installPlugin, uninstallPlugin, error }: PluginStoreProps) {
+  console.log("[PluginStore] render, items:", items.map((i) => i.id + ":" + i.installed).join(","));
+
   const {
     query,
     setQuery,
@@ -38,14 +42,13 @@ export function PluginStore({ items }: PluginStoreProps) {
     setSelectedItem,
   } = usePluginStore(items);
 
-  const { installPlugin, uninstallPlugin, error } = usePluginManager();
-
   const updatesCount = useMemo(
     () => items.filter((item) => item.updateAvailable).length,
     [items]
   );
 
   const handleInstall = async (id: string) => {
+    console.log("[PluginStore] handleInstall:", id);
     const item = items.find((i) => i.id === id);
     if (!item) return;
 
@@ -57,6 +60,7 @@ export function PluginStore({ items }: PluginStoreProps) {
   };
 
   const handleUninstall = async (id: string) => {
+    console.log("[PluginStore] handleUninstall:", id);
     try {
       await uninstallPlugin(id);
     } catch {
@@ -71,7 +75,7 @@ export function PluginStore({ items }: PluginStoreProps) {
           <div>
             <h1 className="text-xl font-semibold text-text-primary">Plugin Store</h1>
             <p className="text-sm text-text-secondary">
-              Discover and manage plugins for Aether
+              Discover and manage plugins for Nidus
             </p>
           </div>
           <div className="relative w-80">

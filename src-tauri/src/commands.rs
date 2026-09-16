@@ -3,6 +3,7 @@ use crate::clipboard::ClipboardService;
 use crate::database::{Database, PartitionManager, PluginInfo};
 use crate::ipc::{PluginBroker, PluginRequest, PluginResponse};
 use crate::rss::{Feed, FeedItem, RssService};
+use base64::{Engine as _, engine::general_purpose};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::path::PathBuf;
@@ -33,6 +34,52 @@ pub fn greet(payload: GreetPayload) -> Result<GreetResponse, String> {
 }
 
 #[tauri::command]
+pub async fn fetch_remote_catalog(url: String) -> Result<String, String> {
+    let response = reqwest::get(&url)
+        .await
+        .map_err(|e| format!("Catalog download failed: {}", e))?;
+    if !response.status().is_success() {
+        return Err(format!(
+            "Catalog fetch failed: {} {}",
+            response.status().as_u16(),
+            response
+                .status()
+                .canonical_reason()
+                .unwrap_or("Unknown")
+        ));
+    }
+    let bytes = response
+        .bytes()
+        .await
+        .map_err(|e| format!("Failed to read catalog bytes: {}", e))?
+        .to_vec();
+    Ok(general_purpose::STANDARD.encode(&bytes))
+}
+
+#[tauri::command]
+pub async fn download_plugin_zip(url: String) -> Result<String, String> {
+    let response = reqwest::get(&url)
+        .await
+        .map_err(|e| format!("Plugin download failed: {}", e))?;
+    if !response.status().is_success() {
+        return Err(format!(
+            "Download failed: {} {}",
+            response.status().as_u16(),
+            response
+                .status()
+                .canonical_reason()
+                .unwrap_or("Unknown")
+        ));
+    }
+    let bytes = response
+        .bytes()
+        .await
+        .map_err(|e| format!("Failed to read plugin zip bytes: {}", e))?
+        .to_vec();
+    Ok(general_purpose::STANDARD.encode(&bytes))
+}
+
+#[tauri::command]
 pub fn get_app_version() -> Result<String, String> {
     Ok(env!("CARGO_PKG_VERSION").to_string())
 }
@@ -51,7 +98,7 @@ pub fn initialize_database(app: AppHandle) -> Result<DatabaseInfo, String> {
 #[tauri::command]
 pub fn ensure_database(app: AppHandle) -> Result<DatabaseInfo, String> {
     let app_data_dir = get_app_data_dir(&app)?;
-    let db_path = app_data_dir.join("aether.db");
+    let db_path = app_data_dir.join("nidus.db");
     let _db = if db_path.exists() {
         Database::open(app_data_dir).map_err(|e| e.to_string())?
     } else {
@@ -67,7 +114,7 @@ pub fn ensure_database(app: AppHandle) -> Result<DatabaseInfo, String> {
 #[tauri::command]
 pub async fn unlock_database(app: AppHandle) -> Result<DatabaseInfo, String> {
     let app_data_dir = get_app_data_dir(&app)?;
-    let db_path = app_data_dir.join("aether.db");
+    let db_path = app_data_dir.join("nidus.db");
 
     if !db_path.exists() {
         return Err("Database does not exist. Please initialize first.".to_string());
@@ -75,7 +122,7 @@ pub async fn unlock_database(app: AppHandle) -> Result<DatabaseInfo, String> {
 
     let auth = BiometricAuth::new();
     let biometric_result = auth
-        .invoke_challenge("Unlock Aether App Suite")
+        .invoke_challenge("Unlock Nidus")
         .await
         .map_err(|e| format!("Biometric challenge failed: {}", e))?;
 
@@ -97,7 +144,7 @@ pub async fn unlock_database(app: AppHandle) -> Result<DatabaseInfo, String> {
 #[tauri::command]
 pub fn get_database_info(app: AppHandle) -> Result<Option<DatabaseInfo>, String> {
     let app_data_dir = get_app_data_dir(&app)?;
-    let db_path = app_data_dir.join("aether.db");
+    let db_path = app_data_dir.join("nidus.db");
 
     if !db_path.exists() {
         return Ok(None);
@@ -214,33 +261,11 @@ pub fn install_plugin(
                     ));
                 }
             }
-            if let Some(manifest_name) = manifest_data.get("name").and_then(|v| v.as_str()) {
-                if manifest_name != name {
-                    return Err(format!(
-                        "Manifest name mismatch: expected {}, got {}",
-                        name, manifest_name
-                    ));
-                }
-            }
             if let Some(manifest_version) = manifest_data.get("version").and_then(|v| v.as_str()) {
                 if manifest_version != version {
                     return Err(format!(
                         "Manifest version mismatch: expected {}, got {}",
                         version, manifest_version
-                    ));
-                }
-            }
-            if let Some(manifest_perms) =
-                manifest_data.get("permissions").and_then(|v| v.as_array())
-            {
-                let perm_strings: Vec<String> = manifest_perms
-                    .iter()
-                    .filter_map(|v| v.as_str().map(String::from))
-                    .collect();
-                if perm_strings != permissions {
-                    return Err(format!(
-                        "Manifest permissions mismatch: expected {:?}, got {:?}",
-                        permissions, perm_strings
                     ));
                 }
             }
@@ -406,8 +431,7 @@ pub fn rss_delete_feed(app: AppHandle, feed_id: String) -> Result<(), String> {
 fn get_app_data_dir(_app: &AppHandle) -> Result<PathBuf, String> {
     let app_data_dir = dirs::data_dir()
         .ok_or_else(|| "Failed to determine app data directory".to_string())?
-        .join("aether")
-        .join("appsuite");
+        .join("nidus");
 
     Ok(app_data_dir)
 }

@@ -2,7 +2,7 @@
 
 ## Scope
 
-These guardrails apply to all construction and operations tasks in the Aether AppSuite project.
+These guardrails apply to all construction and operations tasks in the Nidus project.
 
 ## HIPAA Requirements
 

@@ -48,7 +48,7 @@ try {
     id,
     name: name || id,
     version,
-    permissions: [],
+    permissions: pkg.permissions ?? [],
     entry: "index.html",
   };
 

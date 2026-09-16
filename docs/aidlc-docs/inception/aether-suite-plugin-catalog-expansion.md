@@ -1,4 +1,4 @@
-# Aether App Suite — Plugin Catalog Expansion
+# Nidus — Plugin Catalog Expansion
 
 *Reference notes from planning conversation, based on `tech_spec.md` and `implementation_plan.md`*
 
@@ -6,7 +6,7 @@
 
 ## 1. Context
 
-The base architecture (from `tech_spec.md`) defines Aether App Suite as a Tauri v2 + React desktop app with a sandboxed plugin system:
+The base architecture (from `tech_spec.md`) defines Nidus as a Tauri v2 + React desktop app with a sandboxed plugin system:
 
 - Plugins run in sandboxed iframes via a custom `plugin://` URI scheme
 - SQLCipher (AES-256-GCM) encrypted storage, gated by Windows Hello biometric key release
@@ -26,7 +26,7 @@ Scale: 1–10, fractional allowed. Popularity reflects the general app category 
 |---|---|---|
 | **9.5** | Calendar / Scheduler | Huge category (Google Calendar, Fantastical, Cron). Natural cross-plugin link with Goals and Todo via the IPC broker. |
 | **9.2** | Kanban / Project Board | Trello/Linear-style board; Linear is already a named UI reference for the suite. Could share `db:read`/`db:write` permissions with Todo. |
-| **8.7** | Pomodoro / Focus Timer | Popular category (Forest, Be Focused). Distinct interaction model from AetherTimeTracker (active session timer vs. passive tracking). |
+| **8.7** | Pomodoro / Focus Timer | Popular category (Forest, Be Focused). Distinct interaction model from NidusTimeTracker (active session timer vs. passive tracking). |
 | **8.3** | Linked Notes / Knowledge Graph | Obsidian-style backlinking + graph view. Strong fit — could reuse existing animated SVG knowledge-graph assets for the graph view. |
 | **7.6** | Password / Secrets Vault | TSK-006/007/008 already build SQLCipher + Windows Hello key release, so a vault plugin is a small incremental lift. |
 | **7.4** | Budget / Expense Tracker | High app-store demand (YNAB-style tools). Could tie into Goals Tracker for savings-goal cross-plugin data. |
@@ -36,7 +36,7 @@ Scale: 1–10, fractional allowed. Popularity reflects the general app category 
 | **5.1** | Read-It-Later / RSS Reader | Smaller but durable niche (Pocket, Feedly). Good "polish" addition. |
 
 **Direction notes from discussion:**
-- Some overlap with the existing standalone apps (AetherHabits, AetherTimeTracker, AetherNotes) is acceptable, since the plugin suite has its own manifest/permission model.
+- Some overlap with the existing standalone apps (NidusHabits, NidusTimeTracker, NidusNotes) is acceptable, since the plugin suite has its own manifest/permission model.
 - Priority for new plugins: a mix of personal productivity, security/utility, and creative/knowledge tools (no single category prioritized).
 
 ---

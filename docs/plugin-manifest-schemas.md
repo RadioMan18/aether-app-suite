@@ -2,7 +2,7 @@
 
 ## catalog.json
 
-Root of the `aether-app-plugins` repository. Fetched by the app at startup and on refresh.
+Root of the `nidus-app-plugins` repository. Fetched by the app at startup and on refresh.
 
 ```json
 {
@@ -15,9 +15,9 @@ Root of the `aether-app-plugins` repository. Fetched by the app at startup and o
       "category": "integration",
       "icon": "📅",
       "description": "Sync tasks and journal entries with external calendar providers.",
-      "author": "Aether",
+      "author": "Nidus",
       "permissions": ["network:outbound"],
-      "downloadUrl": "https://github.com/RadioMan18/aether-app-plugins/releases/download/v1.0.0/calendar-sync.zip",
+      "downloadUrl": "https://github.com/RadioMan18/nidus-app-plugins/releases/download/v1.0.0/calendar-sync.zip",
       "checksum": "sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678",
       "changelog": "Initial release."
     }
@@ -45,7 +45,7 @@ Root of the `aether-app-plugins` repository. Fetched by the app at startup and o
 
 ## plugin-manifest.json
 
-Embedded at the root of each plugin zip. Validated during install.
+Embedded at the root of each plugin zip. During install, the backend (`install_plugin` in `commands.rs`) validates only `id` and `version` against the catalog-provided values. The `name` and `permissions` fields are **not** validated against the zip manifest — permissions come from the catalog entry, not the zip. The `entry` field specifies the entry HTML file.
 
 ```json
 {
@@ -61,8 +61,8 @@ Embedded at the root of each plugin zip. Validated during install.
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| id | string | yes | Must match the catalog entry id |
-| name | string | yes | Display name |
-| version | string | yes | Semantic version |
-| permissions | string[] | yes | Declared permissions |
+| id | string | yes | Must match the catalog entry id (validated during install) |
+| name | string | yes | Display name (not validated against catalog — use catalog name) |
+| version | string | yes | Semantic version (validated against catalog during install) |
+| permissions | string[] | yes | Declared permissions (not validated — permissions come from catalog entry) |
 | entry | string | yes | Entry HTML file (relative to zip root) |

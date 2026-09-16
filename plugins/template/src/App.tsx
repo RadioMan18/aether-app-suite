@@ -39,7 +39,7 @@ export function App() {
 
   return (
     <div style={{ padding: 24 }}>
-      <h1 style={{ fontSize: 18, marginBottom: 16 }}>Aether Plugin Template</h1>
+      <h1 style={{ fontSize: 18, marginBottom: 16 }}>Nidus Plugin Template</h1>
       <div style={{ marginBottom: 16 }}>
         <span style={{ color: "#6b6b6b" }}>Status: </span>
         <span style={{ color: status === "Connected" ? "#5fc992" : status === "Error" ? "#ff5f5f" : "#f0f0f0" }}>

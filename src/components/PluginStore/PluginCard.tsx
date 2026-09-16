@@ -56,6 +56,7 @@ export function PluginCard({ item, onSelect, onInstall, onUninstall, isSelected 
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
+                    console.log("[PluginCard] Update click:", item.id);
                     onInstall();
                   }}
                   className="flex items-center gap-1.5 rounded-md bg-accent/10 px-2.5 py-1.5 text-xs font-medium text-accent transition-colors duration-150 hover:bg-accent/20"
@@ -67,6 +68,7 @@ export function PluginCard({ item, onSelect, onInstall, onUninstall, isSelected 
               <button
                 onClick={(e) => {
                   e.stopPropagation();
+                  console.log("[PluginCard] Remove click:", item.id);
                   onUninstall();
                 }}
                 className="flex items-center gap-1.5 rounded-md bg-danger/10 px-2.5 py-1.5 text-xs font-medium text-danger transition-colors duration-150 hover:bg-danger/20"
@@ -79,6 +81,7 @@ export function PluginCard({ item, onSelect, onInstall, onUninstall, isSelected 
             <button
               onClick={(e) => {
                 e.stopPropagation();
+                console.log("[PluginCard] Install click:", item.id);
                 onInstall();
               }}
               className="flex items-center gap-1.5 rounded-md bg-accent px-2.5 py-1.5 text-xs font-medium text-canvas transition-colors duration-150 hover:bg-accent-hover"

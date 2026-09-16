@@ -1,8 +1,8 @@
-# Aether App Suite — UI Architecture & Design System
+# Nidus — UI Architecture & Design System
 
 ## 1. Design Philosophy
 
-Aether App Suite follows a **world-class plugin architecture** inspired by the best-in-class applications: VS Code, Obsidian, Backstage, Raycast, Linear, Notion, Figma, and Arc Browser.
+Nidus follows a **world-class plugin architecture** inspired by the best-in-class applications: VS Code, Obsidian, Backstage, Raycast, Linear, Notion, Figma, and Arc Browser.
 
 ### Core Principles
 
@@ -127,7 +127,7 @@ Every plugin manifest declares its UI integration points:
 
 ```json
 {
-  "id": "com.aether.journal",
+  "id": "com.nidus.journal",
   "name": "Journal",
   "version": "1.0.0",
   "icon": "📓",

@@ -5,7 +5,7 @@ use serde_json::json;
 
 fn setup_test_db() -> Database {
     let unique_dir = std::env::temp_dir().join(format!(
-        "aether-test-cat001-{}-{}",
+        "nidus-test-cat001-{}-{}",
         std::process::id(),
         std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)

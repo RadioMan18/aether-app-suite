@@ -2,7 +2,7 @@
 
 ## Objective
 
-Package, distribute, and maintain the Aether AppSuite application for Windows 11.
+Package, distribute, and maintain the Nidus AppSuite application for Windows 11.
 
 ## Packaging
 

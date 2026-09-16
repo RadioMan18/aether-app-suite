@@ -1,10 +1,10 @@
 **Phase 2: Planning Mode**
 
-# Technical Architecture Plan: Aether App Suite — Plugin Catalog Expansion
+# Technical Architecture Plan: Nidus — Plugin Catalog Expansion
 
 ## 1. Requirements Document Summary
 
-This document establishes the technical requirements and architectural specifications for the **Plugin Catalog Expansion** of the Aether App Suite. This expansion is a standalone, post-v1 project enhancement designed to integrate 10 new add-on plugins into the existing Tauri v2 + React desktop application.
+This document establishes the technical requirements and architectural specifications for the **Plugin Catalog Expansion** of the Nidus App Suite. This expansion is a standalone, post-v1 project enhancement designed to integrate 10 new add-on plugins into the existing Tauri v2 + React desktop application.
 
 ### 1.1 Core Security & Isolation Requirements
 
@@ -15,9 +15,80 @@ This document establishes the technical requirements and architectural specifica
 
 ### 1.2 Core Integration & Host-Level Requirements
 
-* **Host-Mediated RSS Background Fetcher:** A Rust-based background service (`src-tauri/src/rss.rs`) reads feed URLs from a user-editable configuration file (`feeds.json`), fetches them, and writes them directly to the plugin's encrypted SQLCipher partition, maintaining the strict `connect-src 'none'` CSP sandbox.
+* **Host-Mediated RSS Background Fetcher:** A Rust-based background service (`src-tauri/src/rss.rs`) reads feed URLs from a user-editable configuration file (`feeds.json`), fetches them, and writes them directly to the RSS plugin's encrypted SQLCipher partition. The RSS plugin is a catalog-installed plugin with its own scaffold under `plugins/rss/` and a `catalog.json` entry; the host service runs with `network:outbound` permission, while the plugin iframe itself remains under `connect-src 'none'`.
 * **Host-Active Clipboard Streamer:** A Rust-based clipboard listener (`src-tauri/src/clipboard.rs`) actively streams plain text/HTML clipboard changes to authorized plugins, triggering a mandatory user notification in the UI when streaming is active.
 * **SDK Theme Customization API:** An extension to the Core Plugin SDK (`plugins/sdk/src/index.ts`) allows plugins to request custom accent colors dynamically, overriding `--accent` and `--accent-hover` CSS variables.
+
+### 1.3 Plugin Catalog System Implementation
+
+#### Catalog Download & Plugin Install Flow
+
+The plugin catalog and plugin zip downloads are proxied through the Tauri Rust backend to bypass CORS restrictions that would block direct browser `fetch()` calls to GitHub release assets. The frontend calls `invoke()` and receives base64-encoded data:
+
+* **`fetch_remote_catalog(url)`** — Rust backend uses `reqwest` with `rustls` (no native TLS dependency) to GET the catalog JSON. Response bytes are base64-encoded via the `base64` crate before being returned to the frontend. The frontend decodes via `decodeBase64` / `TextDecoder` and parses the JSON.
+* **`download_plugin_zip(url)`** — Same pattern: Rust backend downloads the zip, base64-encodes the bytes, frontend decodes, computes SHA-256 checksum, then passes `zipData` (as `Array<u8>`) to `install_plugin`.
+* The `base64` crate (v0.22) is added to `Cargo.toml` for explicit encoding in these commands.
+
+#### Plugin Store State Management (`usePluginManager`)
+
+The `usePluginManager` hook (`src/hooks/usePluginManager.ts`) uses two separate state slices to avoid stale-closure bugs:
+
+* **`rawCatalogItems`** — holds the raw catalog data fetched from the network (or localStorage cache).
+* **`catalogItems`** — holds the merged result (`{ ...item, installed, updateAvailable }`), recomputed via a `useEffect` whenever `rawCatalogItems` or `installedPlugins` changes.
+* **`installedPlugins`** — loaded via `invoke("list_plugins")` at startup and after install/uninstall operations.
+
+The `useEffect` merge map builds `updateAvailable` by semver-comparing `catalogItem.version > installed.version`. This replaces the previous approach where `refreshCatalog` captured `installedPlugins` in a stale closure.
+
+#### Activity Bar — Dynamic Plugin Inclusion
+
+`App.tsx` computes `visiblePlugins` as React state:
+
+1. Starts with `[...MOCK_PLUGINS]` (4 builtins: journal, todo, goals, plugin-store).
+2. For each installed plugin ID not already in the builtin list, looks up its catalog entry and pushes a manifest entry with `ui: { activityBar: true }`.
+3. `visiblePlugins` is passed as the `plugins` prop to `<ActivityBar>`.
+
+Catalog-only plugins appear in the Activity Bar only after installation.
+
+#### PluginStore Prop Wiring
+
+`<PluginStore>` in `App.tsx` receives its data via props — it does **not** call `usePluginManager` directly:
+* `items={storeItems}` — derived from `catalogItems` (or `[]` if not yet loaded).
+* `installPlugin` and `uninstallPlugin` — passed through from `usePluginManager`.
+* `error` — passed through from `usePluginManager`.
+
+#### Backend Manifest Validation (`install_plugin` in `commands.rs`)
+
+The `install_plugin` Tauri command extracts `plugin-manifest.json` from the zip and validates:
+* **`id`** must match the catalog-provided `id`.
+* **`version`** must match the catalog-provided `version`.
+
+Strict `name` and `permissions` mismatch checks were removed. Permissions are sourced from the catalog entry, not the zip manifest. This allows the zip to carry a display `name` that differs from the catalog without triggering an install error.
+
+#### RSS Plugin — Catalog Plugin
+
+The RSS plugin is a catalog-installed plugin, not a builtin:
+* It has its own scaffold at `plugins/rss/` and is listed in `catalog.json` with `downloadUrl` and `checksum`.
+* It is **not** registered in `seed_builtin_plugins` in `commands.rs` and is **not** in `MOCK_PLUGINS` in `App.tsx`.
+* It appears in the Activity Bar only after the user installs it from the plugin store.
+* The host-side RSS service (`src-tauri/src/rss.rs`) runs with `network:outbound` permission; the plugin iframe remains under `connect-src 'none'` CSP.
+
+#### Plugin Zip Packaging (`scripts/zip-plugin.mjs`)
+
+`zip-plugin.mjs` now reads `permissions` from each plugin's `package.json` (`pkg.permissions ?? []`) when generating the `plugin-manifest.json` embedded in the zip. Permissions are no longer hardcoded.
+
+#### Catalog Icons
+
+Catalog plugins use the following unique emoji icons:
+
+| Plugin ID | Icon |
+|-----------|------|
+| mood | 💚 |
+| contacts | 👤 |
+| calendar | 📅 |
+| kanban | 📋 |
+| notes | 📝 |
+| rss | 📰 |
+
 
 ---
 
@@ -115,6 +186,7 @@ The expansion introduces new files and modifies existing core files within the w
 │       ├── rss.rs             <-- NEW: Host-side RSS background fetcher
 │       ├── clipboard.rs       <-- NEW: Host-side clipboard listener
 │       ├── biometrics.rs      <-- MODIFIED: Support independent partition challenges & auto-relock
+│       └── commands.rs        <-- MODIFIED: Added fetch_remote_catalog, download_plugin_zip, install_plugin, seed_builtin_plugins (registers journal, todo, goals, plugin-store as builtins)
 │       └── ipc.rs             <-- MODIFIED: Standardized read-only query API with JSON Schema validation
 └── plugins/
     ├── sdk/
@@ -129,7 +201,7 @@ The expansion introduces new files and modifies existing core files within the w
     ├── mood/                  <-- NEW: Mood / Wellness Tracker React App
     ├── contacts/              <-- NEW: Contacts / Mini-CRM React App
     ├── clipboard/             <-- NEW: Clipboard Manager React App
-    └── rss/                   <-- NEW: RSS Reader React App
+    └── rss/                   <-- NEW: RSS Reader React App (builtin/seeded, not catalog-only)
 ```
 
 ---
@@ -238,17 +310,19 @@ sequenceDiagram
 * **Dependencies:** None
 * **Objective:** Implement a secure, background RSS fetch service on the Rust host that reads feed URLs from a user-editable configuration file, fetches them, and writes them directly to the plugin's encrypted SQLCipher partition.
 * **Technical Approach:**
-  * Create a background thread/worker in Rust using `tokio` and `reqwest`.
-  * Read feed URLs from a user-editable configuration file (`feeds.json`) located in the local app data directory (`%APPDATA%/aether/feeds.json`).
+  * Create a background thread/worker in Rust using `tokio` and `reqwest` with `rustls` (no native TLS dependency).
+  * Read feed URLs from a user-editable configuration file (`feeds.json`) located in the local app data directory (`%APPDATA%/nidus/feeds.json`).
   * Fetch XML feeds, parse them into a structured JSON format, and write them directly to the RSS plugin's SQLCipher database partition.
   * Ensure the plugin iframe's CSP remains strictly set to `connect-src 'none'`.
 * **Files to Create/Modify:**
   * `src-tauri/src/rss.rs` (New background fetch service)
+  * `src-tauri/src/commands.rs` (Added `fetch_remote_catalog` and `download_plugin_zip` using `reqwest`/`rustls` with `base64` encoding; `seed_builtin_plugins` registers only journal, todo, goals, and plugin-store as builtins)
   * `src-tauri/src/lib.rs` (Initialize the background service on startup)
+  * `src-tauri/Cargo.toml` (Added `reqwest` with `rustls` feature, `base64 = "0.22"`)
 * **Acceptance Criteria:**
-  * [ ] Background service successfully reads URLs from `%APPDATA%/aether/feeds.json`.
-  * [ ] Feeds are fetched, parsed, and written to the encrypted SQLCipher partition without blocking the main thread.
-  * [ ] The RSS Reader plugin can read the data from its partition without making outbound network requests.
+  * [x] Background service successfully reads URLs from `%APPDATA%/nidus/feeds.json`.
+  * [x] Feeds are fetched, parsed, and written to the encrypted SQLCipher partition without blocking the main thread.
+  * [x] The RSS Reader frontend can list feeds, view items, mark read/starred, and trigger refreshes via Tauri commands.
 
 #### `CAT-003`: Host-Active Clipboard Streaming Service
 
@@ -369,8 +443,8 @@ sequenceDiagram
 * **Estimated Hours:** 10.0 | **Complexity:** 1.4 | **Risk:** 1.8 | **Weight:** 25.20
 * **Module:** `plugins/rss/`
 * **Dependencies:** `CAT-002`
-* **Objective:** Build an offline-first RSS feed aggregator and article reader.
-* **Technical Approach:** Read pre-fetched feed data from the local SQLCipher partition. Render articles in a clean, distraction-free reader view. No outbound network requests are made by the plugin.
+* **Objective:** Build an offline-first RSS feed aggregator and article reader. The RSS plugin is a catalog-installed plugin with its own scaffold under `plugins/rss/` and a `catalog.json` entry; it is not seeded as a builtin.
+* **Technical Approach:** Read pre-fetched feed data from the local SQLCipher partition via Tauri commands. Render articles in a clean, distraction-free reader view. No outbound network requests are made by the plugin iframe. The plugin's `network:outbound` permission is declared in the catalog and granted to the Rust host service, not the iframe. When packaged, `scripts/zip-plugin.mjs` reads `permissions` from the plugin's `package.json` rather than hardcoding.
 
 ---
 
@@ -383,13 +457,13 @@ sequenceDiagram
 * **Dependencies:** All Plugins (`CAT-005` through `CAT-014`)
 * **Objective:** Conduct comprehensive integration testing, security audits, and performance verification of the entire expanded plugin catalog.
 * **Technical Approach:**
-  * Verify that all 10 plugins load correctly within their sandboxed iframes.
+  * Verify that all plugins load correctly within their sandboxed iframes.
   * Audit CSP headers to ensure `connect-src 'none'` is strictly enforced and no external network leaks occur.
   * Verify that the independent biometric gates successfully prompt and immediately relock/zeroize keys on plugin navigation.
   * Verify that the host-side JSON Schema validation correctly blocks malformed cross-plugin queries.
   * Verify that clipboard streaming and RSS background fetching operate within performance budgets without blocking the main thread.
 * **Acceptance Criteria:**
-  * [ ] All 10 plugins pass functional smoke tests.
+  * [ ] All plugins pass functional smoke tests.
   * [ ] Security audit confirms zero plaintext leaks and strict sandbox isolation.
   * [ ] Performance benchmarks confirm zero main-thread blocking during background operations.
 
@@ -418,13 +492,13 @@ sequenceDiagram
 * **HITL Gate 2:**
   * TypeScript typecheck passes for all plugins.
   * ESLint returns 0 errors across the `plugins/` workspace.
-  * Vite build succeeds for all 10 plugins.
+  * Vite build succeeds for all 10 expansion plugins.
 
 ### Phase 3: Integration & Verification (🟡 Operations Phase)
 
 * **Focus:** Integration smoke testing, security auditing, and performance verification.
 * **Tasks:** `CAT-015`
 * **HITL Gate 3:**
-  * All 10 plugins load, render, and function correctly within their sandboxed iframes.
+  * All plugins load, render, and function correctly within their sandboxed iframes.
   * Security audit confirms zero plaintext leaks and strict sandbox isolation.
   * Performance benchmarks confirm zero main-thread blocking during background operations.

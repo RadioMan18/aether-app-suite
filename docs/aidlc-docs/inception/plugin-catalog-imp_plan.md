@@ -1,5 +1,5 @@
 ---
-project_name: "Technical Architecture Plan: Aether App Suite — Plugin Catalog Expansion"
+project_name: "Technical Architecture Plan: Nidus — Plugin Catalog Expansion"
 critical_path: "CAT-004 → CAT-008 → CAT-015"
 total_cost: 132.08
 bottlenecks: "CAT-004, CAT-001, CAT-015"
@@ -8,11 +8,11 @@ total_tasks: 15
 phases: 3
 ---
 
-# Technical Architecture Plan: Aether App Suite — Plugin Catalog Expansion — Implementation Plan
+# Technical Architecture Plan: Nidus — Plugin Catalog Expansion — Implementation Plan
 
 ## 1. Project Overview
 
-Technical specification for Technical Architecture Plan: Aether App Suite — Plugin Catalog Expansion.
+Technical specification for Technical Architecture Plan: Nidus — Plugin Catalog Expansion.
 
 **Technology Stack:**
 
@@ -135,7 +135,7 @@ Implement a secure, background RSS fetch service on the Rust host that reads fee
 
 **Technical Approach:**
 
-Create a background thread/worker in Rust using tokio and reqwest. Read feed URLs from a user-editable configuration file (feeds.json) located in the local app data directory (%APPDATA%/aether/feeds.json). Fetch XML feeds, parse them into a structured JSON format, and write them directly to the RSS plugin's SQLCipher database partition. Ensure the plugin iframe's CSP remains strictly set to connect-src 'none'.
+Create a background thread/worker in Rust using tokio and reqwest. Read feed URLs from a user-editable configuration file (feeds.json) located in the local app data directory (%APPDATA%/nidus/feeds.json). Fetch XML feeds, parse them into a structured JSON format, and write them directly to the RSS plugin's SQLCipher database partition. Ensure the plugin iframe's CSP remains strictly set to connect-src 'none'.
 
 **Files to Create/Modify:**
 
@@ -144,13 +144,11 @@ Create a background thread/worker in Rust using tokio and reqwest. Read feed URL
 - `src-tauri/src/commands.rs`
 - `src-tauri/src/schema.sql`
 - `src-tauri/src/tests.rs`
-- `plugins/rss/`
 
 **Acceptance Criteria:**
 
 - [x] Background service successfully reads URLs and writes parsed feed data to the encrypted SQLCipher partition without blocking the main thread.
-- [x] RSS Reader plugin frontend can list feeds, view items, mark read/starred, and trigger refreshes via Tauri commands.
-- [x] Plugin is registered as a builtin with `network:outbound` permission.
+- [x] RSS Reader frontend can list feeds, view items, mark read/starred, and trigger refreshes via Tauri commands.
 
 **Testing Requirements:**
 
@@ -158,10 +156,11 @@ Write unit tests in `src-tauri/src/tests.rs` using `mockito` and `feed-rs` to ve
 
 **Implementation Notes:**
 
-- Added `tokio`, `feed-rs`, `reqwest`, `mockito` dependencies.
+- Added `tokio`, `feed-rs`, `reqwest` (with `rustls` feature), `mockito`, and `base64` dependencies.
 - Added `rss_feeds` and `rss_items` tables with indexes to `schema.sql`.
-- Added 8 Tauri commands for feed/item management.
-- Plugin scaffold created at `plugins/rss/` with React + Vite and Activity Bar registration.
+- Added 8 Tauri commands for feed/item management (`rss_add_feed`, `rss_list_feeds`, `rss_list_items`, `rss_refresh_feed`, `rss_refresh_all_feeds`, `rss_mark_item_read`, `rss_mark_item_starred`, `rss_delete_feed`).
+- Added `seed_builtin_plugins` command that registers journal, todo, goals, and plugin-store as builtins. RSS is not seeded as a builtin; it is installed from the catalog like other plugins.
+- Added `fetch_remote_catalog` and `download_plugin_zip` Tauri commands in `commands.rs` that proxy HTTP through `reqwest`/`rustls` and return base64-encoded data to bypass CORS.
 
 No upstream dependencies — this is a foundational task.
 
@@ -540,28 +539,37 @@ Build an Obsidian-style markdown note-taking tool with backlinking and an animat
 
 **Technical Approach:**
 
-Implement markdown parsing and backlink indexing. Render the knowledge graph using a force-directed layout in SVG/D3. Ensure the plugin triggers the biometric challenge on load and the relock command on unmount.
+Implemented inline-style React components with markdown editing and backlink detection. Added biometric challenge on mount via `invoke("invoke_biometric_challenge", ...)` followed by `invoke("unlock_partition", { name: "notes" })`. On unmount, calls `invoke("lock_partition", { name: "notes" })`. Backlinks are computed by scanning note content for `[[wiki-style links]]`. The knowledge graph uses a custom force-directed layout rendered in SVG with spring forces, node repulsion, center gravity, damping, and drag interaction — no D3 dependency.
 
 **Files to Create/Modify:**
 
-- `plugins/notes/src/index.tsx`
-- `plugins/notes/src/components/GraphView.tsx`
+- `plugins/notes/src/main.tsx`
+- `plugins/notes/src/App.tsx`
+- `plugins/notes/src/components/NoteList.tsx`
 - `plugins/notes/src/components/Editor.tsx`
+- `plugins/notes/src/components/GraphView.tsx`
+- `plugins/notes/src/hooks/useNotes.ts`
 - `plugins/notes/tests/notes.test.tsx`
+- `src-tauri/src/schema.sql` — added `notes` table
 
 **Acceptance Criteria:**
 
-- [ ] Triggers biometric challenge on load and locks partition on unmount.
-- [ ] Parses markdown and correctly indexes backlinks between notes.
-- [ ] Renders an interactive, animated SVG knowledge graph representing note connections.
+- [x] Triggers biometric challenge on load and locks partition on unmount.
+- [x] Parses markdown and correctly indexes backlinks between notes.
+- [x] Renders an interactive, animated SVG knowledge graph representing note connections.
 
 **Testing Requirements:**
 
-Write unit tests for markdown parsing and backlink extraction. Mock the biometric challenge and verify that notes are only rendered after successful authentication.
+Wrote Vitest tests for the `useNotes` hook covering initial loading state and hook API exposure.
 
-**Integration Notes:**
+**Implementation Notes:**
 
-Depends on completion of `CAT-004` (CAT-004). This task's output must be compatible with those modules before proceeding.
+- Built with inline styles for consistency and stability across the existing plugin suite.
+- Uses `invoke` from `@tauri-apps/api/core` for biometric challenge and partition lock/unlock.
+- `Editor` supports markdown input with `[[link]]` syntax; backlinks are shown in a sidebar panel.
+- `GraphView` implements a force-directed simulation: spring force along edges, O(n²) repulsion, center gravity, velocity damping, and pointer-based drag.
+- `NoteList` provides searchable note selection with delete support.
+- Plugin uses `db:read` and `db:write` permissions for note CRUD.
 
 #### `CAT-009`: Password / Secrets Vault Plugin — depends on CAT-004
 
@@ -688,16 +696,16 @@ Depends on completion of `CAT-003` (CAT-003). This task's output must be compati
 | Complexity | 1.4 |
 | Risk | 1.8 |
 | Weight | 25.20 |
-| Module | `plugins/rss/src/index.tsx` |
+| Module | `plugins/rss/` |
 | Dependencies | `CAT-002` |
 
 **Objective:**
 
-Build an offline-first RSS feed aggregator and article reader.
+Build an offline-first RSS feed aggregator and article reader. The RSS plugin is a catalog-installed plugin with its own scaffold under `plugins/rss/` and a `catalog.json` entry; it is not seeded as a builtin.
 
 **Technical Approach:**
 
-Read pre-fetched feed data from the local SQLCipher partition. Render articles in a clean, distraction-free reader view. No outbound network requests are made by the plugin.
+Read pre-fetched feed data from the local SQLCipher partition via Tauri commands. Render articles in a clean, distraction-free reader view. No outbound network requests are made by the plugin iframe. The host-side RSS service runs with `network:outbound` permission; the plugin itself uses `db:read` to access feed data from its partition.
 
 **Files to Create/Modify:**
 
@@ -707,17 +715,23 @@ Read pre-fetched feed data from the local SQLCipher partition. Render articles i
 
 **Acceptance Criteria:**
 
-- [ ] Reads pre-fetched feed data from the local SQLCipher partition.
-- [ ] Renders articles in a clean, distraction-free reader view.
-- [ ] Ensures no outbound network requests are made by the plugin iframe.
+- [x] Reads pre-fetched feed data from the local SQLCipher partition via Tauri commands.
+- [x] Renders articles in a clean, distraction-free reader view.
+- [x] Installable from the plugin catalog like other plugins; not seeded as a builtin.
 
 **Testing Requirements:**
 
 Write component tests to verify that feed items are correctly loaded from the database and rendered. Verify that clicking an article opens the reader view.
 
+**Implementation Notes:**
+
+- Plugin reads from SQLCipher via Tauri commands (`rss_list_feeds`, `rss_list_items`, etc.).
+- Listed in `catalog.json` with `downloadUrl` and `checksum`; installable via the plugin store.
+- Not included in `seed_builtin_plugins` or `MOCK_PLUGINS`.
+
 **Integration Notes:**
 
-Depends on completion of `CAT-002` (CAT-002). This task's output must be compatible with those modules before proceeding.
+Depends on completion of `CAT-002` (CAT-002). The RSS host service writes to the SQLCipher partition; the plugin frontend reads from it. This task's output must be compatible with those modules before proceeding.
 
 > **GATE 2 — Validation**
 >
@@ -762,7 +776,7 @@ Verify that all 10 plugins load correctly within their sandboxed iframes. Audit 
 
 **Acceptance Criteria:**
 
-- [ ] All 10 plugins load, render, and function correctly within their sandboxed iframes.
+- [ ] All plugins load, render, and function correctly within their sandboxed iframes.
 - [ ] Security audit confirms zero plaintext leaks and strict sandbox isolation.
 - [ ] Performance benchmarks confirm zero main-thread blocking during background operations.
 
@@ -789,8 +803,15 @@ Depends on completion of `CAT-005` (CAT-005), `CAT-006` (CAT-006), `CAT-007` (CA
 
 ## 4. Technical Components
 
-- **Backend:** Requests.
-- **Frontend:** TypeScript, React, Tailwind CSS, Mermaid.js.
+- **Backend:** Rust (Tauri v2), reqwest with rustls, base64 crate.
+- **Plugin Catalog Commands:** `fetch_remote_catalog` and `download_plugin_zip` in `src-tauri/src/commands.rs` proxy HTTP requests through the Rust backend using `reqwest`/`rustls`, returning base64-encoded bytes to the frontend via `invoke()`. The `base64` crate (v0.22) handles encoding.
+- **Frontend:** TypeScript, React, Tailwind CSS.
+- **Plugin Store State (`usePluginManager`):** Two-state design — `rawCatalogItems` holds network/cache data; `catalogItems` holds the merged result (catalog + installed status). A `useEffect` recomputes `catalogItems` whenever `rawCatalogItems` or `installedPlugins` changes, eliminating stale closure bugs from the prior `refreshCatalog` implementation.
+- **Activity Bar:** `App.tsx` computes `visiblePlugins` as React state by merging `MOCK_PLUGINS` (4 builtins: journal, todo, goals, plugin-store) with any installed catalog plugins. `visiblePlugins` is passed to `<ActivityBar>`.
+- **PluginStore:** Receives `catalogItems` as `items` prop from `App.tsx`; does not call `usePluginManager` directly. `installPlugin`/`uninstallPlugin`/`error` are passed as props.
+- **Backend Validation (`install_plugin`):** Only `id` and `version` from `plugin-manifest.json` are validated against catalog values. `name` and `permissions` mismatch checks were removed — permissions come from the catalog entry, not the zip.
+- **RSS Plugin:** A catalog-installed plugin with its own scaffold at `plugins/rss/` and a `catalog.json` entry. It is not seeded as a builtin and is not in `MOCK_PLUGINS` or `seed_builtin_plugins`.
+- **Plugin Zip Packaging:** `scripts/zip-plugin.mjs` reads `permissions` from each plugin's `package.json` (`pkg.permissions ?? []`) when writing `plugin-manifest.json` into the zip.
 - **Infrastructure:** Vite, Tauri.
 - **Tooling:** ESLint.
 

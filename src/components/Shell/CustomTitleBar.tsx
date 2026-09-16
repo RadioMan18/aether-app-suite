@@ -68,7 +68,7 @@ export function CustomTitleBar() {
       className="flex h-8 w-full select-none items-center justify-between border-b border-border bg-surface-1"
     >
       <div className="flex items-center gap-2 px-3" data-tauri-drag-region>
-        <span className="text-sm font-medium text-text-primary">Aether</span>
+        <span className="text-sm font-medium text-text-primary">Nidus</span>
       </div>
 
       <div className="flex items-center">

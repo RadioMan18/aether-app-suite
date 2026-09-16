@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 fn setup_test_dir() -> PathBuf {
     let dir = std::env::temp_dir().join(format!(
-        "aether-test-biometrics-{}-{}",
+        "nidus-test-biometrics-{}-{}",
         std::process::id(),
         std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)

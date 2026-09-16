@@ -1,5 +1,5 @@
 ---
-project_name: "Technical Architecture Plan: Aether App Suite (Tauri + Windows 11)"
+project_name: "Technical Architecture Plan: Nidus (Tauri + Windows 11)"
 critical_path: "TSK-001 → TSK-002 → TSK-003 → TSK-005 → TSK-010 → TSK-012 → TSK-016"
 total_cost: 286.15
 bottlenecks: "TSK-002, TSK-010, TSK-012"
@@ -9,11 +9,11 @@ phases: 4
 plugin_workspace: "plugins/"
 ---
 
-# Technical Architecture Plan: Aether App Suite (Tauri + Windows 11)
+# Technical Architecture Plan: Nidus (Tauri + Windows 11)
 
 ## 1. Project Overview
 
-This document establishes the complete technical architecture and dependency-aware execution plan for the Aether App Suite — a world-class, secure, extensible desktop application platform. It is optimized for direct ingestion by the downstream pipeline (Task Extractor, Graph Engine, and AIDLC Generator).
+This document establishes the complete technical architecture and dependency-aware execution plan for the Nidus platform — a world-class, secure, extensible desktop application platform. It is optimized for direct ingestion by the downstream pipeline (Task Extractor, Graph Engine, and AIDLC Generator).
 
 ### UI Architecture Reference
 

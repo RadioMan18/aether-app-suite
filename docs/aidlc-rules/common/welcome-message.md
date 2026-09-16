@@ -1,6 +1,6 @@
 # Welcome Message
 
-Welcome to the AIDLC execution environment for **Aether AppSuite**.
+Welcome to the AIDLC execution environment for **Nidus AppSuite**.
 
 ## Your Mission
 

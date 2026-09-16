@@ -6,14 +6,14 @@ const root = document.getElementById("root");
 
 window.addEventListener("error", (event) => {
   window.parent.postMessage(
-    { type: "aether:plugin-error", error: event.error?.stack ?? event.message },
+    { type: "nidus:plugin-error", error: event.error?.stack ?? event.message },
     "*",
   );
 });
 
 window.addEventListener("unhandledrejection", (event) => {
   window.parent.postMessage(
-    { type: "aether:plugin-error", error: String(event.reason) },
+    { type: "nidus:plugin-error", error: String(event.reason) },
     "*",
   );
 });
@@ -31,7 +31,7 @@ createRoot(root).render(
 requestAnimationFrame(() => {
   requestAnimationFrame(() => {
     window.parent.postMessage({
-      type: "aether:plugin-mounted",
+      type: "nidus:plugin-mounted",
       plugin: "calendar",
       details: {
         root: root.getBoundingClientRect().toJSON(),

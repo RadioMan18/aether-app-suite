@@ -2,7 +2,7 @@
 
 ## Objective
 
-Clarify and refine requirements for the Aether AppSuite modular desktop platform.
+Clarify and refine requirements for the Nidus modular desktop platform.
 
 ## Key Questions to Resolve
 

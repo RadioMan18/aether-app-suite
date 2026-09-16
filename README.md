@@ -1,4 +1,4 @@
-# Aether App Suite
+# Nidus
 
 A privacy-first, plugin-based desktop productivity suite built with Tauri, React, and SQLCipher.
 
@@ -21,7 +21,7 @@ A privacy-first, plugin-based desktop productivity suite built with Tauri, React
 The app ships with a Plugin Store that fetches `catalog.json` from the companion catalog repository:
 
 ```
-https://github.com/RadioMan18/aether-app-plugins
+https://github.com/RadioMan18/nidus-app-plugins
 ```
 
 Plugins are delivered as signed zip assets via GitHub Releases. Each zip contains a `plugin-manifest.json` that declares the plugin's identity, version, permissions, and entry point.

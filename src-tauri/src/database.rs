@@ -16,7 +16,7 @@ impl Database {
         std::fs::create_dir_all(&app_data_dir)
             .map_err(|e| format!("Failed to create app data directory: {}", e))?;
 
-        let db_path = app_data_dir.join("aether.db");
+        let db_path = app_data_dir.join("nidus.db");
         log::info!("Database open retrieving encryption key");
         let key = CredentialManager::retrieve_key().map_err(|e| {
             format!(
@@ -33,7 +33,7 @@ impl Database {
         std::fs::create_dir_all(&app_data_dir)
             .map_err(|e| format!("Failed to create app data directory: {}", e))?;
 
-        let db_path = app_data_dir.join("aether.db");
+        let db_path = app_data_dir.join("nidus.db");
         let mut key = [0u8; 32];
         rand::rng().fill(&mut key);
 
@@ -357,7 +357,7 @@ pub struct CredentialManager;
 
 #[allow(dead_code)]
 impl CredentialManager {
-    const SERVICE: &'static str = "aether-app-suite";
+    const SERVICE: &'static str = "nidus";
     const MAIN_USERNAME: &'static str = "db-encryption-key";
 
     pub fn store_key(key: &str) -> Result<(), String> {

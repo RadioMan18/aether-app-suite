@@ -1,8 +1,8 @@
-# Aether App Suite — Technical Architecture Specification
+# Nidus — Technical Architecture Specification
 
 ## 1. Executive Summary & Requirements
 
-Aether App Suite is a world-class, secure, extensible Windows 11 desktop application built with **Tauri v2** and **React**. It features a sandboxed plugin architecture with a polished, keyboard-first UI inspired by VS Code, Obsidian, Backstage, Raycast, Linear, Notion, Figma, and Arc Browser.
+Nidus is a world-class, secure, extensible Windows 11 desktop application built with **Tauri v2** and **React**. It features a sandboxed plugin architecture with a polished, keyboard-first UI inspired by VS Code, Obsidian, Backstage, Raycast, Linear, Notion, Figma, and Arc Browser.
 
 ### Core Requirements
 
@@ -178,12 +178,12 @@ export interface PluginManifest {
 
 ## 6. IPC Message Schema
 
-All messages traversing the `postMessage` boundary use the `aether:` namespace:
+All messages traversing the `postMessage` boundary use the `nidus:` namespace:
 
 ```typescript
 // Plugin -> Host
-interface AetherRequest {
-  type: "aether:request";
+interface NidusRequest {
+  type: "nidus:request";
   requestId: string;
   payload: {
     type: "db:query" | "db:execute";
@@ -192,8 +192,8 @@ interface AetherRequest {
 }
 
 // Host -> Plugin
-interface AetherResponse {
-  type: "aether:response";
+interface NidusResponse {
+  type: "nidus:response";
   requestId: string;
   result?: PluginResponse;
   error?: string;
@@ -292,7 +292,7 @@ Plugins inherit these automatically. Override allowed but theme preference shoul
 - **HITL Gate 2:** ✅ PASSED — `cargo check` 0 errors, `cargo clippy -D warnings` 0 warnings, `cargo fmt` passes, TypeScript typecheck passes, ESLint 0 errors.
 - **Implementation Notes:**
   - Plugins developed in dedicated `plugins/` workspace outside `src/`
-  - Test plugin HTML deployed at `%APPDATA%/aether/appsuite/plugins/journal/index.html`
+  - Test plugin HTML deployed at `%APPDATA%/nidus/appsuite/plugins/journal/index.html`
   - IPC bridge uses `postMessage` with `invoke("plugin_ipc", ...)` from `PluginSandbox.tsx`
   - Permission validation implemented in Rust (`src-tauri/src/ipc.rs`), not TypeScript
   - Plugin registry stored in SQLCipher `plugins` table

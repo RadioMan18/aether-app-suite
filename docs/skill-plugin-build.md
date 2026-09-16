@@ -2,7 +2,7 @@
 
 ## Overview
 
-This skill captures the lessons learned from building the Aether plugin system, including the plugin SDK, React template, journal plugin, and the Tauri host integration. Use this as a reference when creating new plugins or extending the plugin runtime.
+This skill captures the lessons learned from building the Nidus plugin system, including the plugin SDK, React template, journal plugin, and the Tauri host integration. Use this as a reference when creating new plugins or extending the plugin runtime.
 
 ---
 
@@ -110,16 +110,16 @@ const response = await broker.request<{ tasks: Task[] }>({
 
 The `plugin://` URI scheme serves files from:
 ```
-%APPDATA%/aether/appsuite/plugins/{plugin-id}/
+%APPDATA%/nidus/plugins/{plugin-id}/
 ```
 
 ### 4.2 Development Override
 
-During development, set the `AETHER_PLUGIN_DIR` environment variable to serve plugins from the project directory:
+During development, set the `NIDUS_PLUGIN_DIR` environment variable to serve plugins from the project directory:
 
 ```bat
 :: open-ui.bat
-set AETHER_PLUGIN_DIR=%~dp0plugins
+set NIDUS_PLUGIN_DIR=%~dp0plugins
 npm run tauri dev
 ```
 
@@ -184,7 +184,7 @@ For text editing:
 
 **Problem:** Plugins show 404 in development.
 
-**Solution:** Set `AETHER_PLUGIN_DIR` environment variable to the `plugins/` directory path.
+**Solution:** Set `NIDUS_PLUGIN_DIR` environment variable to the `plugins/` directory path.
 
 ### 6.3 React Hook Dependencies
 
@@ -283,4 +283,4 @@ const rows = await db.query("SELECT * FROM my_table");
 - [ ] No plaintext data in localStorage or logs
 - [ ] Dark theme styles applied
 - [ ] Plugin tested in sandboxed iframe
-- [ ] `AETHER_PLUGIN_DIR` set in `open-ui.bat` for development
+- [ ] `NIDUS_PLUGIN_DIR` set in `open-ui.bat` for development
