@@ -105,5 +105,40 @@ CREATE TABLE IF NOT EXISTS glucose_entries (
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS contacts (
+    id TEXT PRIMARY KEY NOT NULL,
+    name TEXT NOT NULL,
+    email TEXT,
+    phone TEXT,
+    company TEXT,
+    notes TEXT,
+    tags TEXT NOT NULL DEFAULT '',
+    last_contact_date TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS interactions (
+    id TEXT PRIMARY KEY NOT NULL,
+    contact_id TEXT NOT NULL,
+    interaction_type TEXT NOT NULL,
+    notes TEXT,
+    interacted_at TEXT NOT NULL DEFAULT (datetime('now')),
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (contact_id) REFERENCES contacts(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_interactions_contact_id ON interactions(contact_id);
+CREATE INDEX IF NOT EXISTS idx_contacts_tags ON contacts(tags);
+
+CREATE TABLE IF NOT EXISTS kanban_columns (
+    todo_id TEXT PRIMARY KEY NOT NULL,
+    column TEXT NOT NULL DEFAULT 'todo',
+    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (todo_id) REFERENCES todos(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_kanban_columns_column ON kanban_columns(column);
+
 UPDATE journal_entries SET id = lower(hex(randomblob(16))) WHERE id IS NULL;
 UPDATE todos SET id = lower(hex(randomblob(16))) WHERE id IS NULL;

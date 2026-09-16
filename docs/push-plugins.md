@@ -7,6 +7,10 @@ This document describes the end-to-end process for adding a new plugin to the pu
 - You have write access to `https://github.com/RadioMan18/aether-app-plugins`
 - The plugin is implemented and registered locally under `plugins/<id>/`
 - The plugin passes the evaluation gate in `docs/plugin-evaluation-gate.md`
+- **Windows note:** If you clone the catalog repo into a directory on a filesystem that does not record ownership, Git may block operations with `detected dubious ownership`. Fix it once with:
+  ```powershell
+  git config --global --add safe.directory D:/src/aether-app-suite/.cache/aether-app-plugins
+  ```
 
 ---
 
@@ -51,7 +55,7 @@ Copy the hash value. You will need it for `catalog.json`.
 
 After publishing, the asset URL will be:
 ```
-https://github.com/RadioMan18/aether-app-plugins/releases/download/v<version>/<id>.zip
+https://github.com/RadioMan18/aether-app-plugins/releases/download/v<version>/<id>-<version>.zip
 ```
 
 ---
@@ -70,30 +74,47 @@ Edit `D:\src\aether-app-suite\catalog.json` and add a new entry to the `plugins`
   "description": "<Brief description of the plugin>.",
   "author": "Aether",
   "permissions": [],
-  "downloadUrl": "https://github.com/RadioMan18/aether-app-plugins/releases/download/v<version>/<id>.zip",
+  "downloadUrl": "https://github.com/RadioMan18/aether-app-plugins/releases/download/v<version>/<id>-<version>.zip",
   "checksum": "sha256:<computed-hash>",
   "changelog": "Initial plugin catalog release."
 }
 ```
 
 Notes:
-- `permissions` must match the array in `src/App.tsx` `MOCK_PLUGINS`
+- `permissions` must match the array declared in the plugin's `plugin-manifest.json` or frontend manifest
 - `downloadUrl` must match the GitHub Release asset URL exactly
 - `checksum` must be the lowercase SHA256 hash from Step 2
 
 ---
 
-## Step 5: Commit and Push `catalog.json`
+## Step 5: Commit and Push `catalog.json` to the Catalog Repo
 
-From the repo root, run:
+The `catalog.json` file must be pushed to the **public plugins catalog repo**, not the main app repo.
 
-```bash
-git add catalog.json
-git commit -m "Add <plugin-name> to catalog"
-git push --set-upstream origin main
-```
+1. If you haven't already, clone the catalog repo from the repo root:
+   ```bash
+   git clone https://github.com/RadioMan18/aether-app-plugins.git .cache/aether-app-plugins
+   ```
 
-The first time you push, use `--set-upstream origin main` to link your local branch to the remote. After that, `git push` alone is sufficient.
+2. Copy your updated `catalog.json` into the catalog repo:
+   ```bash
+   # Git Bash / WSL / macOS
+   cp catalog.json .cache/aether-app-plugins/catalog.json
+   ```
+   ```powershell
+   # PowerShell
+   Copy-Item "D:\src\aether-app-suite\catalog.json" ".cache\aether-app-plugins\catalog.json"
+   ```
+
+3. Commit and push from the catalog repo:
+   ```bash
+   cd .cache/aether-app-plugins
+   git add catalog.json
+   git commit -m "Add <plugin-name> to catalog"
+   git push
+   ```
+
+This ensures the public catalog at `https://github.com/RadioMan18/aether-app-plugins` is updated, which is what the Plugin Store reads at runtime.
 
 ---
 
@@ -115,7 +136,7 @@ The first time you push, use `--set-upstream origin main` to link your local bra
 | 2 | Get checksum | `Get-FileHash plugins\<id>\<id>-<version>.zip -Algorithm SHA256` |
 | 3 | Create GitHub Release | `https://github.com/RadioMan18/aether-app-plugins/releases/new` |
 | 4 | Update catalog | Edit `catalog.json` |
-| 5 | Push catalog | `git add catalog.json && git commit -m "Add <plugin-name> to catalog" && git push` |
+| 5 | Push catalog to plugins repo | `cd .cache/aether-app-plugins && git add catalog.json && git commit -m "Add <plugin-name> to catalog" && git push` |
 | 6 | Verify | Open release page and test in app |
 
 ---

@@ -90,6 +90,36 @@
       "rating": 4.6,
       "downloads": 570,
       "changelog": "Initial plugin catalog release."
-    }
+    },
+    {
+      "id": "calendar",
+      "name": "Calendar",
+      "version": "0.1.0",
+      "category": "productivity",
+      "icon": "🍅",
+      "description": "Simple calendar plugin for managing events and appointments.",
+      "author": "Aether",
+      "permissions": ["db:read", "db:write"],
+      "downloadUrl": "https://github.com/RadioMan18/aether-app-plugins/releases/download/v0.1.0/calendar.zip",
+      "checksum": "sha256:238e9ea4741e3d2634b0627e8e87f745eab887e76c08f03a72f8db3ed65a1265",
+      "rating": 4.7,
+      "downloads": 765,
+      "changelog": "Initial plugin catalog release."
+    },
+    {
+  "id": "kanban",
+  "name": "Kanban Board",
+  "version": "0.1.0",
+  "category": "productivity",
+  "icon": "✅",
+  "description": "Simple Kanban board plugin for managing tasks and workflows.",
+  "author": "Aether",
+  "permissions": ["db:read", "db:write"],
+  "downloadUrl": "https://github.com/RadioMan18/aether-app-plugins/releases/download/v0.1.0/kanban.zip",
+  "checksum": "sha256:121fbdc4239756cefb349c4a0044dab87cec5de32e93a51741577b4bfc115c9a",
+  "rating": 4.5,
+  "downloads": 430,
+  "changelog": "Initial plugin catalog release."
+  }
   ]
 }

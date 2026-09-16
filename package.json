@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:plugins": "npm run build --prefix plugins/journal && npm run build --prefix plugins/todo && npm run build --prefix plugins/goals && npm run build --prefix plugins/rss && npm run build --prefix plugins/pomodoro && npm run build --prefix plugins/mood",
+    "build:plugins": "npm run build --prefix plugins/journal && npm run build --prefix plugins/todo && npm run build --prefix plugins/goals",
     "preview": "vite preview",
     "tauri": "tauri",
     "lint": "eslint .",

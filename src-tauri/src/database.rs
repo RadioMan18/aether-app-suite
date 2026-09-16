@@ -234,6 +234,7 @@ impl Database {
 
 pub struct PartitionKey(zeroize::Zeroizing<String>);
 
+#[allow(dead_code)]
 impl PartitionKey {
     pub fn new(key: String) -> Self {
         Self(zeroize::Zeroizing::new(key))
@@ -244,6 +245,7 @@ impl PartitionKey {
     }
 }
 
+#[allow(dead_code)]
 pub struct Partition {
     name: String,
     key: Option<PartitionKey>,
@@ -287,6 +289,7 @@ impl Partition {
         self.conn.is_none()
     }
 
+    #[allow(dead_code)]
     pub fn with_connection<F, R>(&self, f: F) -> Result<R, String>
     where
         F: FnOnce(&rusqlite::Connection) -> Result<R, String>,
@@ -301,6 +304,7 @@ impl Partition {
     }
 }
 
+#[allow(dead_code)]
 pub struct PartitionManager {
     partitions: Mutex<HashMap<String, Arc<Mutex<Partition>>>>,
 }
@@ -339,6 +343,7 @@ impl PartitionManager {
         Ok(())
     }
 
+    #[allow(dead_code)]
     pub fn is_locked(&self, name: &str) -> bool {
         let partitions = self.partitions.lock().unwrap();
         partitions.get(name).map_or(true, |p| {
@@ -350,6 +355,7 @@ impl PartitionManager {
 
 pub struct CredentialManager;
 
+#[allow(dead_code)]
 impl CredentialManager {
     const SERVICE: &'static str = "aether-app-suite";
     const MAIN_USERNAME: &'static str = "db-encryption-key";

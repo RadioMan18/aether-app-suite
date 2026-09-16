@@ -45,20 +45,6 @@ pub struct ClipboardPayload {
     pub timestamp: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ClipboardContent {
-    pub text: Option<String>,
-    pub html: Option<String>,
-}
-
-pub fn is_valid_clipboard_content(content: &ClipboardContent) -> bool {
-    content.text.is_some() || content.html.is_some()
-}
-
-pub fn has_clipboard_permission(permissions: &[String]) -> bool {
-    permissions.contains(&"clipboard:subscribe".to_string())
-}
-
 pub struct ClipboardService {
     app: AppHandle,
     active_plugin: Arc<Mutex<Option<String>>>,
@@ -166,10 +152,5 @@ impl ClipboardService {
                 }
             }
         });
-    }
-
-    pub fn stop(&self) {
-        let mut running = self.running.lock().unwrap();
-        *running = false;
     }
 }
