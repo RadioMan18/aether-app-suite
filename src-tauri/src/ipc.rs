@@ -72,6 +72,7 @@ impl<'a> PluginBroker<'a> {
                 log::info!("Plugin broker request: plugin={}, action={}", plugin_id, action);
                 let mut inner_req = request;
                 inner_req.payload = inner;
+                inner_req.request_type = action.to_string();
                 match action {
                     "todo:get_tasks" => self.handle_schema_query(inner_req, "todo_get_tasks.json"),
                     "goals:get_milestones" => {
