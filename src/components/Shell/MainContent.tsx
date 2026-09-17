@@ -3,8 +3,7 @@ import { PluginSandbox } from "@/components/PluginSandbox";
 import type { PluginManifest } from "@/types/plugin";
 
 function pluginUrl(pluginId: string) {
-  const protocol = navigator.userAgent.includes("Windows") ? "http://plugin.localhost" : "plugin://localhost";
-  return `${protocol}/${pluginId}/index.html`;
+  return `plugin://localhost/${pluginId}/index.html`;
 }
 
 interface MainContentProps {
