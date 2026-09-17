@@ -26,18 +26,29 @@ function setupListener(): MessageHandler {
     if (!message || typeof message !== "object") return;
     if (message.type !== "nidus:response") return;
 
-    const { requestId: rid, result } = message as { requestId: string; result?: NidusResponse };
-    if (!rid || !result) return;
+    const { requestId: rid, result, error } = message as {
+      requestId: string;
+      result?: NidusResponse;
+      error?: string;
+    };
+
+    if (!rid) return;
 
     const pending = pendingRequests.get(rid);
     if (!pending) return;
 
     pendingRequests.delete(rid);
 
-    if (result.error) {
-      pending.reject(new Error(result.error));
+    if (error) {
+      pending.reject(new Error(error));
+    } else if (result) {
+      if (result.error) {
+        pending.reject(new Error(result.error));
+      } else {
+        pending.resolve(result.data ?? null);
+      }
     } else {
-      pending.resolve(result.data ?? null);
+      pending.reject(new Error("Empty response from host"));
     }
   };
 }

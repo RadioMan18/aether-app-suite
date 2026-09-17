@@ -94,12 +94,7 @@ export default function App() {
         [id, "New Note", "", now, now],
       );
       await loadNotes();
-      const rows = await db.query<Note>(
-        "SELECT id, title, content, created_at, updated_at FROM notes ORDER BY created_at DESC LIMIT 1",
-      );
-      if (rows.length > 0) {
-        setSelectedNoteId(rows[0].id);
-      }
+      setSelectedNoteId(id);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }

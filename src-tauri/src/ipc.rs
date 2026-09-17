@@ -59,6 +59,34 @@ impl<'a> PluginBroker<'a> {
             "goals:get_milestones" => {
                 self.handle_schema_query(request, "goals_get_milestones.json")
             }
+            "broker:request" => {
+                let payload = request.payload.clone();
+                let inner = payload
+                    .get("payload")
+                    .cloned()
+                    .unwrap_or_else(|| Value::Object(serde_json::Map::new()));
+                let action = payload
+                    .get("action")
+                    .and_then(|v| v.as_str())
+                    .ok_or_else(|| "Missing 'action' in broker request".to_string())?;
+                let mut inner_req = request;
+                inner_req.payload = inner;
+                match action {
+                    "todo:get_tasks" => self.handle_schema_query(inner_req, "todo_get_tasks.json"),
+                    "goals:get_milestones" => {
+                        self.handle_schema_query(inner_req, "goals_get_milestones.json")
+                    }
+                    _ => Err(format!("Unknown broker action: {}", action)),
+                }
+            }
+            "rss:add_feed" => self.handle_rss_add_feed(request),
+            "rss:list_feeds" => self.handle_rss_list_feeds(request),
+            "rss:list_items" => self.handle_rss_list_items(request),
+            "rss:refresh_feed" => self.handle_rss_refresh_feed(request),
+            "rss:refresh_all_feeds" => self.handle_rss_refresh_all_feeds(request),
+            "rss:mark_item_read" => self.handle_rss_mark_item_read(request),
+            "rss:mark_item_starred" => self.handle_rss_mark_item_starred(request),
+            "rss:delete_feed" => self.handle_rss_delete_feed(request),
             _ => Err(format!("Unknown request type: {}", request.request_type)),
         }
     }
@@ -332,6 +360,135 @@ impl<'a> PluginBroker<'a> {
             })
         })
     }
+
+    fn handle_rss_add_feed(&self, request: PluginRequest) -> Result<PluginResponse, String> {
+        let url = request
+            .payload
+            .get("url")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| "Missing 'url' in payload".to_string())?;
+
+        let service = crate::rss::RssService::new(self.db);
+        let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
+        let feed = rt.block_on(service.add_feed(url))?;
+        Ok(PluginResponse {
+            id: request.id,
+            success: true,
+            data: Some(serde_json::to_value(feed).map_err(|e| e.to_string())?),
+            error: None,
+        })
+    }
+
+    fn handle_rss_list_feeds(&self, request: PluginRequest) -> Result<PluginResponse, String> {
+        let service = crate::rss::RssService::new(self.db);
+        let feeds = service.list_feeds()?;
+        Ok(PluginResponse {
+            id: request.id,
+            success: true,
+            data: Some(serde_json::to_value(feeds).map_err(|e| e.to_string())?),
+            error: None,
+        })
+    }
+
+    fn handle_rss_list_items(&self, request: PluginRequest) -> Result<PluginResponse, String> {
+        let feed_id = request.payload.get("feed_id").and_then(|v| v.as_str());
+        let unread_only = request.payload.get("unread_only").and_then(|v| v.as_bool()).unwrap_or(false);
+        let limit = request.payload.get("limit").and_then(|v| v.as_u64()).map(|v| v as usize);
+
+        let service = crate::rss::RssService::new(self.db);
+        let items = service.list_items(feed_id, unread_only, limit)?;
+        Ok(PluginResponse {
+            id: request.id,
+            success: true,
+            data: Some(serde_json::to_value(items).map_err(|e| e.to_string())?),
+            error: None,
+        })
+    }
+
+    fn handle_rss_refresh_feed(&self, request: PluginRequest) -> Result<PluginResponse, String> {
+        let feed_id = request
+            .payload
+            .get("feed_id")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| "Missing 'feed_id' in payload".to_string())?;
+
+        let service = crate::rss::RssService::new(self.db);
+        let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
+        rt.block_on(service.refresh_feed(feed_id))?;
+        Ok(PluginResponse {
+            id: request.id,
+            success: true,
+            data: Some(Value::Object(serde_json::Map::new())),
+            error: None,
+        })
+    }
+
+    fn handle_rss_refresh_all_feeds(&self, request: PluginRequest) -> Result<PluginResponse, String> {
+        let service = crate::rss::RssService::new(self.db);
+        let rt = tokio::runtime::Runtime::new().map_err(|e| e.to_string())?;
+        let count = rt.block_on(service.refresh_all_feeds())?;
+        let mut data = serde_json::Map::new();
+        data.insert("refreshed".to_string(), Value::Number(count.into()));
+        Ok(PluginResponse {
+            id: request.id,
+            success: true,
+            data: Some(Value::Object(data)),
+            error: None,
+        })
+    }
+
+    fn handle_rss_mark_item_read(&self, request: PluginRequest) -> Result<PluginResponse, String> {
+        let item_id = request
+            .payload
+            .get("item_id")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| "Missing 'item_id' in payload".to_string())?;
+        let is_read = request.payload.get("is_read").and_then(|v| v.as_bool()).unwrap_or(false);
+
+        let service = crate::rss::RssService::new(self.db);
+        service.mark_item_read(item_id, is_read)?;
+        Ok(PluginResponse {
+            id: request.id,
+            success: true,
+            data: Some(Value::Object(serde_json::Map::new())),
+            error: None,
+        })
+    }
+
+    fn handle_rss_mark_item_starred(&self, request: PluginRequest) -> Result<PluginResponse, String> {
+        let item_id = request
+            .payload
+            .get("item_id")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| "Missing 'item_id' in payload".to_string())?;
+        let is_starred = request.payload.get("is_starred").and_then(|v| v.as_bool()).unwrap_or(false);
+
+        let service = crate::rss::RssService::new(self.db);
+        service.mark_item_starred(item_id, is_starred)?;
+        Ok(PluginResponse {
+            id: request.id,
+            success: true,
+            data: Some(Value::Object(serde_json::Map::new())),
+            error: None,
+        })
+    }
+
+    fn handle_rss_delete_feed(&self, request: PluginRequest) -> Result<PluginResponse, String> {
+        let feed_id = request
+            .payload
+            .get("feed_id")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| "Missing 'feed_id' in payload".to_string())?;
+
+        let service = crate::rss::RssService::new(self.db);
+        service.delete_feed(feed_id)?;
+        Ok(PluginResponse {
+            id: request.id,
+            success: true,
+            data: Some(Value::Object(serde_json::Map::new())),
+            error: None,
+        })
+    }
 }
 
 fn required_permission(request_type: &str) -> &'static str {
@@ -340,6 +497,15 @@ fn required_permission(request_type: &str) -> &'static str {
         "db:execute" => "db:write",
         "todo:get_tasks" => "db:read",
         "goals:get_milestones" => "db:read",
+        "broker:request" => "db:read",
+        "rss:add_feed" => "db:write",
+        "rss:list_feeds" => "db:read",
+        "rss:list_items" => "db:read",
+        "rss:mark_item_read" => "db:write",
+        "rss:mark_item_starred" => "db:write",
+        "rss:delete_feed" => "db:write",
+        "rss:refresh_feed" => "db:write",
+        "rss:refresh_all_feeds" => "db:write",
         "clipboard:subscribe" => "clipboard:subscribe",
         _ => "unknown",
     }
