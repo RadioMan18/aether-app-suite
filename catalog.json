@@ -11,7 +11,7 @@
       "author": "Nidus",
       "permissions": [],
       "downloadUrl": "https://github.com/RadioMan18/nidus-app-plugins/releases/download/v0.1.1/pomodoro-0.1.0.zip",
-      "checksum": "sha256:770183e10a47497c65766d17fe47b709bcc0ddc75092dfafc4c3cbd8fa61cd6d",
+      "checksum": "sha256:19a19fd7d9d12d9e1d246d1cd1efeb41b26550af994f5c848164bc9037174ead",
       "rating": 4.7,
       "downloads": 1120,
       "changelog": "Rebuilt with Nidus rebrand (IPC namespace update)."
@@ -26,7 +26,7 @@
       "author": "Nidus",
       "permissions": ["db:read", "db:write"],
       "downloadUrl": "https://github.com/RadioMan18/nidus-app-plugins/releases/download/Mood_v0.1.1/mood-0.1.0.zip",
-      "checksum": "sha256:f6e72ac55e2192f08a6812454a45d84db301e4d24b190deda5561545fc7ca291",
+      "checksum": "sha256:f483ac34d020847fb35334c86e45ed01a0de806c3a3574246b8d23759477a106",
       "rating": 4.4,
       "downloads": 540,
       "changelog": "Rebuilt with Nidus rebrand (IPC namespace update)."
@@ -41,7 +41,7 @@
       "author": "Nidus",
       "permissions": ["db:read", "db:write"],
       "downloadUrl": "https://github.com/RadioMan18/nidus-app-plugins/releases/download/Contacts_v0.1.1/contacts-0.1.0.zip",
-      "checksum": "sha256:154b08a1f20f7db109154bcbedd52ca7856608233310d525dd4a5075f5a87740",
+      "checksum": "sha256:186b44fa24d399657d8b3ad99f78a12b4fb53f28ad7574857132189a708d1b6c",
       "rating": 4.6,
       "downloads": 570,
       "changelog": "Rebuilt with Nidus rebrand (IPC namespace update)."
@@ -56,7 +56,7 @@
       "author": "Nidus",
       "permissions": ["db:read", "db:write"],
       "downloadUrl": "https://github.com/RadioMan18/nidus-app-plugins/releases/download/Calendar_v0.1.1/calendar-0.1.0.zip",
-      "checksum": "sha256:a9a3b50bf368b418cbec3518ae961c3ce71a6754a857992a4363eae43f4df748",
+      "checksum": "sha256:db5dcf109f92ab7318083cb160d8bab51d34c2c4bec39c4546632e5d3f561cab",
       "rating": 4.7,
       "downloads": 765,
       "changelog": "Rebuilt with Nidus rebrand (IPC namespace update)."
@@ -71,7 +71,7 @@
   "author": "Nidus",
   "permissions": ["db:read", "db:write"],
       "downloadUrl": "https://github.com/RadioMan18/nidus-app-plugins/releases/download/Kanban_v0.1.1/kanban-0.1.0.zip",
-      "checksum": "sha256:70e0c9b25991d9c98e963496418dab6f8a17fa7746bfdef0eb20d6788df78e0a",
+      "checksum": "sha256:aa7ec7802519d5ed4018b23207e594b7da33bdfd3a49aee51b3acc0db896d7d6",
   "rating": 4.5,
   "downloads": 430,
   "changelog": "Rebuilt with Nidus rebrand (IPC namespace update)."
@@ -86,7 +86,7 @@
   "author": "Nidus",
   "permissions": ["db:read", "db:write"],
       "downloadUrl": "https://github.com/RadioMan18/nidus-app-plugins/releases/download/Notes_v0.1.1/notes-0.1.0.zip",
-      "checksum": "sha256:5e6bb2d0b04c86eb373c4fee5bb63ea20cb7b4d333732c0d10905d84d111cfe9",
+      "checksum": "sha256:9dc070736ca5ef3a24bca40f43a129e0d1a39ca49ea93dc19bf0dd23c009b7b3",
   "rating":4.8,
   "downloads": 875,
   "changelog": "Rebuilt with Nidus rebrand (IPC namespace update)."
@@ -101,7 +101,7 @@
   "author": "Nidus",
   "permissions": ["db:read", "db:write"],
       "downloadUrl": "https://github.com/RadioMan18/nidus-app-plugins/releases/download/RSS_v0.1.1/rss-0.1.0.zip",
-      "checksum": "sha256:db1aa46bd37a37dd5258a8727a3eff015584a6bf486d8ded7ebf098e9bd2e9f0",
+      "checksum": "sha256:cfff9d0a74671a8f57ff1a9dec1a9ba18a0cdc8919b3885e94256a5af86605b6",
   "rating":4.6,
   "downloads": 900,
   "changelog": "Rebuilt with Nidus rebrand (IPC namespace update)."
