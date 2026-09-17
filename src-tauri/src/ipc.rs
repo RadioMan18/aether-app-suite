@@ -69,6 +69,7 @@ impl<'a> PluginBroker<'a> {
                     .get("action")
                     .and_then(|v| v.as_str())
                     .ok_or_else(|| "Missing 'action' in broker request".to_string())?;
+                log::info!("Plugin broker request: plugin={}, action={}", plugin_id, action);
                 let mut inner_req = request;
                 inner_req.payload = inner;
                 match action {
@@ -200,7 +201,9 @@ impl<'a> PluginBroker<'a> {
         schema_name: &str,
     ) -> Result<PluginResponse, String> {
         let schema = load_schema(schema_name)?;
+        log::info!("Plugin broker schema validation: schema={}, payload={:?}", schema_name, request.payload);
         if let Err(errors) = jsonschema::validate(&schema, &request.payload) {
+            log::warn!("Plugin broker schema validation failed: schema={}, errors={}", schema_name, errors);
             return Ok(PluginResponse {
                 id: request.id,
                 success: false,
