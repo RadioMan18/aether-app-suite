@@ -3,6 +3,9 @@ import { PluginSandbox } from "@/components/PluginSandbox";
 import type { PluginManifest } from "@/types/plugin";
 
 function pluginUrl(pluginId: string) {
+  if (import.meta.env.DEV) {
+    return `http://localhost:1420/plugins/${pluginId}/dist/index.html`;
+  }
   return `plugin://localhost/${pluginId}/index.html`;
 }
 
