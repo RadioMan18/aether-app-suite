@@ -4,7 +4,7 @@
       {
       "id": "pomodoro",
       "name": "Pomodoro Timer",
-      "version": "0.1.1",
+      "version": "0.1.0",
       "category": "productivity",
       "icon": "🍅",
       "description": "Lightweight focus timer with work/short break/long break sessions.",
@@ -19,7 +19,7 @@
     {
       "id": "mood",
       "name": "Wellness Tracker",
-      "version": "0.1.1",
+      "version": "0.1.0",
       "category": "productivity",
       "icon": "💚",
       "description": "Mood, weight, blood pressure, and glucose tracker with historical charts.",
@@ -34,7 +34,7 @@
     {
       "id": "contacts",
       "name": "Contacts",
-      "version": "0.1.1",
+      "version": "0.1.0",
       "category": "productivity",
       "icon": "👤",
       "description": "Contact tracker with interaction notes.",
@@ -49,7 +49,7 @@
     {
       "id": "calendar",
       "name": "Calendar",
-      "version": "0.1.1",
+      "version": "0.1.0",
       "category": "productivity",
       "icon": "📅",
       "description": "Simple calendar plugin for managing events and appointments.",
@@ -64,7 +64,7 @@
     {
   "id": "kanban",
   "name": "Kanban Board",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "category": "productivity",
   "icon": "📋",
   "description": "Simple Kanban board plugin for managing tasks and workflows.",
@@ -79,7 +79,7 @@
   {
   "id": "notes",
   "name": "Notes",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "category": "productivity",
   "icon": "📝",
   "description": "Simple notes plugin for capturing and organizing thoughts with added knowledge graph.",
@@ -94,7 +94,7 @@
   {
   "id": "rss",
   "name": "RSS Reader",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "category": "productivity",
   "icon": "📰",
   "description": "Simple RSS reader plugin for staying updated with your favorite feeds.",
