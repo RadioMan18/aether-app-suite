@@ -37,10 +37,20 @@ function addWeeks(date: Date, amount: number) {
   return result;
 }
 
+function toDateInputValue(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export default function App() {
   const [viewMode, setViewMode] = useState<ViewMode>("month");
   const [current, setCurrent] = useState(() => startOfMonth(new Date()));
-  const { events, isLoading, error } = useCalendarEvents();
+  const { events, isLoading, error, addLocalEvent } = useCalendarEvents();
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newDate, setNewDate] = useState(() => toDateInputValue(new Date()));
 
   const periodStart = useMemo(() => {
     if (viewMode === "month") return startOfMonth(current);
@@ -86,6 +96,15 @@ export default function App() {
   const handleViewModeChange = (mode: ViewMode) => {
     setViewMode(mode);
     setCurrent(viewMode === "month" && mode !== "month" ? startOfWeek(new Date()) : current);
+  };
+
+  const handleAddEvent = async () => {
+    const title = newTitle.trim();
+    if (!title || !newDate) return;
+    await addLocalEvent(title, newDate);
+    setNewTitle("");
+    setNewDate(toDateInputValue(new Date()));
+    setShowAddForm(false);
   };
 
   const eventsByDate = useMemo(() => {
@@ -245,7 +264,79 @@ export default function App() {
             <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#ff5f5f" }} />
             Goal
           </span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#55b3ff" }} />
+            Event
+          </span>
         </div>
+
+        <div style={{ padding: "0 20px 16px" }}>
+          <button
+            onClick={() => setShowAddForm((prev) => !prev)}
+            style={{
+              width: "100%",
+              background: "#55b3ff",
+              color: "#fff",
+              border: "none",
+              borderRadius: 6,
+              padding: "8px 12px",
+              fontSize: 13,
+              cursor: "pointer",
+              fontWeight: 500,
+            }}
+          >
+            {showAddForm ? "Close" : "Add Event"}
+          </button>
+        </div>
+
+        {showAddForm && (
+          <div style={{ padding: "0 20px 16px", display: "flex", flexDirection: "column", gap: 8 }}>
+            <input
+              type="text"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              placeholder="Event title"
+              style={{
+                padding: "8px 12px",
+                borderRadius: 6,
+                border: "1px solid #2e2f32",
+                background: "#040506",
+                color: "#f0f0f0",
+                fontSize: 14,
+                outline: "none",
+              }}
+            />
+            <input
+              type="date"
+              value={newDate}
+              onChange={(e) => setNewDate(e.target.value)}
+              style={{
+                padding: "8px 12px",
+                borderRadius: 6,
+                border: "1px solid #2e2f32",
+                background: "#040506",
+                color: "#f0f0f0",
+                fontSize: 14,
+                outline: "none",
+              }}
+            />
+            <button
+              onClick={handleAddEvent}
+              style={{
+                background: "#55b3ff",
+                color: "#fff",
+                border: "none",
+                borderRadius: 6,
+                padding: "8px 12px",
+                fontSize: 13,
+                cursor: "pointer",
+                fontWeight: 500,
+              }}
+            >
+              Save Event
+            </button>
+          </div>
+        )}
       </div>
 
       <div style={{ flex: 1, overflow: "auto" }}>

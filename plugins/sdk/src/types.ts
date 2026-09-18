@@ -1,5 +1,5 @@
 export interface NidusRequestPayload {
-  type: "db:query" | "db:execute" | "broker:request";
+  type: "db:query" | "db:execute" | "broker:request" | "rss:add_feed" | "rss:list_feeds" | "rss:list_items" | "rss:refresh_feed" | "rss:refresh_all_feeds" | "rss:mark_item_read" | "rss:mark_item_starred" | "rss:delete_feed";
   params?: Record<string, unknown>;
 }
 

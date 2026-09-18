@@ -7,8 +7,8 @@ import { execSync } from "child_process";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 
-const CATALOG_REPO = "https://github.com/RadioMan18/aether-app-plugins.git";
-const CATALOG_DIR = path.resolve(ROOT, ".cache", "aether-app-plugins");
+const CATALOG_REPO = "https://github.com/RadioMan18/nidus-app-plugins.git";
+const CATALOG_DIR = path.resolve(ROOT, ".cache", "nidus-app-plugins");
 const CATALOG_BRANCH = "main";
 
 function exec(cmd, opts = {}) {
@@ -122,13 +122,13 @@ function createGitHubReleases(plugins) {
     const title = `${plugin.name} ${plugin.version}`;
     const assetPath = path.join(CATALOG_DIR, path.basename(plugin.zipPath));
 
-    const existing = exec(`gh release view "${tag}" --repo RadioMan18/aether-app-plugins --json tagName -q .tagName 2>NUL || echo "__MISSING__"`).trim();
+    const existing = exec(`gh release view "${tag}" --repo RadioMan18/nidus-app-plugins --json tagName -q .tagName 2>NUL || echo "__MISSING__"`).trim();
     if (existing === tag) {
       console.log(`  Release ${tag} already exists, uploading asset`);
-      exec(`gh release upload "${tag}" "${assetPath}" --repo RadioMan18/aether-app-plugins --clobber`);
+      exec(`gh release upload "${tag}" "${assetPath}" --repo RadioMan18/nidus-app-plugins --clobber`);
     } else {
       console.log(`  Creating release ${tag}`);
-      exec(`gh release create "${tag}" "${assetPath}" --repo RadioMan18/aether-app-plugins --title "${title}" --notes "Initial release of ${plugin.name} v${plugin.version}."`);
+      exec(`gh release create "${tag}" "${assetPath}" --repo RadioMan18/nidus-app-plugins --title "${title}" --notes "Initial release of ${plugin.name} v${plugin.version}."`);
     }
   }
 }

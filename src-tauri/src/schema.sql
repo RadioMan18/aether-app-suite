@@ -140,6 +140,18 @@ CREATE TABLE IF NOT EXISTS kanban_columns (
 
 CREATE INDEX IF NOT EXISTS idx_kanban_columns_column ON kanban_columns(column);
 
+CREATE TABLE IF NOT EXISTS calendar_events (
+    id TEXT PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    date TEXT NOT NULL,
+    type TEXT NOT NULL DEFAULT 'event',
+    status TEXT NOT NULL DEFAULT 'scheduled',
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_calendar_events_date ON calendar_events(date);
+
 CREATE TABLE IF NOT EXISTS notes (
     id TEXT PRIMARY KEY NOT NULL,
     title TEXT NOT NULL,

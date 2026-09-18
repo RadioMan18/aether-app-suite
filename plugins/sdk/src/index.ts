@@ -36,12 +36,32 @@ export const db = {
 
 export const broker = {
   async request<T = unknown>(params: BrokerRequestParams): Promise<BrokerResponse<T>> {
-    const result = await sendRequest<BrokerResponse<T>>({
+    const raw = await sendRequest<unknown>({
       type: "broker:request",
       params: { ...params },
     });
 
-    return result ?? { success: false, error: "No response from broker" };
+    if (!raw) {
+      return { success: false, error: "No response from broker" };
+    }
+
+    const data = raw as Record<string, unknown>;
+    if (Array.isArray(data.columns) && Array.isArray(data.rows)) {
+      const columns = data.columns as string[];
+      const rows = data.rows as unknown[][];
+      return {
+        success: true,
+        data: rows.map((row) => {
+          const obj: Record<string, unknown> = {};
+          columns.forEach((col, index) => {
+            obj[col] = row[index];
+          });
+          return obj as T;
+        }) as T,
+      };
+    }
+
+    return { success: true, data: raw as T };
   },
 };
 

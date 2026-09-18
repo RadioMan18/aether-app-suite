@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { invoke } from "@tauri-apps/api/core";
+import { sendRequest } from "../../sdk/src/bridge.ts";
 
 interface Feed {
   id: string;
@@ -38,8 +38,11 @@ export default function App() {
     setLoading(true);
     setError(null);
     try {
-      const result = await invoke<Feed[]>("rss_list_feeds");
-      setFeeds(result);
+      const result = await sendRequest<Feed[]>({
+        type: "rss:list_feeds",
+        params: {},
+      });
+      setFeeds(result ?? []);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -51,12 +54,15 @@ export default function App() {
     setLoading(true);
     setError(null);
     try {
-      const result = await invoke<FeedItem[]>("rss_list_items", {
-        feedId: feedId ?? null,
-        unreadOnly: false,
-        limit: 100,
+      const result = await sendRequest<FeedItem[]>({
+        type: "rss:list_items",
+        params: {
+          feed_id: feedId ?? null,
+          unread_only: false,
+          limit: 100,
+        },
       });
-      setItems(result);
+      setItems(result ?? []);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -80,7 +86,10 @@ export default function App() {
     setLoading(true);
     setError(null);
     try {
-      await invoke("rss_add_feed", { url: feedUrl.trim() });
+      await sendRequest({
+        type: "rss:add_feed",
+        params: { url: feedUrl.trim() },
+      });
       setFeedUrl("");
       await loadFeeds();
     } catch (e) {
@@ -95,9 +104,15 @@ export default function App() {
     setError(null);
     try {
       if (selectedFeedId) {
-        await invoke("rss_refresh_feed", { feedId: selectedFeedId });
+        await sendRequest({
+          type: "rss:refresh_feed",
+          params: { feed_id: selectedFeedId },
+        });
       } else {
-        await invoke("rss_refresh_all_feeds");
+        await sendRequest({
+          type: "rss:refresh_all_feeds",
+          params: {},
+        });
       }
       await loadFeeds();
       if (selectedFeedId) {
@@ -112,7 +127,10 @@ export default function App() {
 
   const handleMarkRead = async (itemId: string, isRead: boolean) => {
     try {
-      await invoke("rss_mark_item_read", { itemId, isRead });
+      await sendRequest({
+        type: "rss:mark_item_read",
+        params: { item_id: itemId, is_read: isRead },
+      });
       await loadItems(selectedFeedId ?? undefined);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -121,7 +139,10 @@ export default function App() {
 
   const handleDeleteFeed = async (feedId: string) => {
     try {
-      await invoke("rss_delete_feed", { feedId });
+      await sendRequest({
+        type: "rss:delete_feed",
+        params: { feed_id: feedId },
+      });
       if (selectedFeedId === feedId) {
         setSelectedFeedId(null);
         setItems([]);

@@ -79,7 +79,7 @@ export function PluginSandbox({ src, title, plugin }: PluginSandboxProps) {
       ref={iframeRef}
       src={src}
       title={title}
-      sandbox="allow-scripts allow-same-origin allow-top-navigation-to-custom-protocols"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-top-navigation-to-custom-protocols"
       className="block h-full min-h-[480px] min-w-full w-full border-0 bg-canvas"
       allow="clipboard-write"
     />

@@ -50,7 +50,7 @@ impl PluginProtocol {
 
         log::info!("Plugin asset resolved: {}", resolved.display());
 
-        let allowed_base = plugins_dir.canonicalize().unwrap_or(plugins_dir);
+        let allowed_base = plugins_dir.canonicalize().unwrap_or(plugins_dir.clone());
         if !resolved.starts_with(&allowed_base) {
             return Self::forbidden("Path traversal detected");
         }
@@ -110,27 +110,30 @@ impl PluginProtocol {
 
     fn not_found(message: &str) -> tauri::http::Response<Vec<u8>> {
         let body = format!("<html><body><h1>404</h1><p>{}</p></body></html>", message);
+        let body_bytes = body.into_bytes();
         tauri::http::Response::builder()
             .status(tauri::http::StatusCode::NOT_FOUND)
             .header(tauri::http::header::CONTENT_TYPE, "text/html")
-            .body(body.into_bytes())
+            .body(body_bytes)
             .unwrap_or_else(|_| Self::internal_error())
     }
 
     fn forbidden(message: &str) -> tauri::http::Response<Vec<u8>> {
         let body = format!("<html><body><h1>403</h1><p>{}</p></body></html>", message);
+        let body_bytes = body.into_bytes();
         tauri::http::Response::builder()
             .status(tauri::http::StatusCode::FORBIDDEN)
             .header(tauri::http::header::CONTENT_TYPE, "text/html")
-            .body(body.into_bytes())
+            .body(body_bytes)
             .unwrap_or_else(|_| Self::internal_error())
     }
 
     fn internal_error() -> tauri::http::Response<Vec<u8>> {
+        let body_bytes = FALLBACK_HTML.as_bytes().to_vec();
         tauri::http::Response::builder()
             .status(tauri::http::StatusCode::INTERNAL_SERVER_ERROR)
             .header(tauri::http::header::CONTENT_TYPE, "text/html")
-            .body(FALLBACK_HTML.as_bytes().to_vec())
+            .body(body_bytes)
             .unwrap_or_else(|_| {
                 tauri::http::Response::builder()
                     .status(tauri::http::StatusCode::INTERNAL_SERVER_ERROR)
