@@ -26,6 +26,15 @@ pub struct DatabaseInfo {
     pub initialized: bool,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct InstalledPluginInfo {
+    pub id: String,
+    pub name: String,
+    pub version: String,
+    pub permissions: Vec<String>,
+    pub installed_at: String,
+}
+
 #[tauri::command]
 pub fn greet(payload: GreetPayload) -> Result<GreetResponse, String> {
     Ok(GreetResponse {
@@ -275,6 +284,68 @@ pub fn install_plugin(
 
     db.register_plugin(&id, &name, &version, &permissions)?;
     db.extract_plugin(app_data_dir, &id, &zip_data).map(|_| ())
+}
+
+#[tauri::command]
+pub fn install_local_plugin(app: AppHandle, path: String) -> Result<InstalledPluginInfo, String> {
+    let zip_data = std::fs::read(&path).map_err(|e| format!("Failed to read plugin zip: {}", e))?;
+
+    let app_data_dir = get_app_data_dir(&app)?;
+    let db = Database::open(app_data_dir.clone()).map_err(|e| e.to_string())?;
+
+    let cursor = std::io::Cursor::new(&zip_data);
+    let mut archive =
+        zip::ZipArchive::new(cursor).map_err(|e| format!("Failed to read plugin zip: {}", e))?;
+
+    for i in 0..archive.len() {
+        let mut file = archive
+            .by_index(i)
+            .map_err(|e| format!("Failed to read zip entry: {}", e))?;
+        if file.name() == "plugin-manifest.json" {
+            let manifest_data: serde_json::Value = serde_json::from_reader(&mut file)
+                .map_err(|e| format!("Failed to parse plugin-manifest.json: {}", e))?;
+            let manifest_id = manifest_data.get("id").and_then(|v| v.as_str()).map(|s| s.to_string());
+            let manifest_version = manifest_data
+                .get("version")
+                .and_then(|v| v.as_str())
+                .map(|s| s.to_string());
+            let permissions = manifest_data
+                .get("permissions")
+                .and_then(|v| v.as_array())
+                .map(|arr| {
+                    arr.iter()
+                        .filter_map(|v| v.as_str().map(|s| s.to_string()))
+                        .collect::<Vec<_>>()
+                })
+                .unwrap_or_default();
+            let name = manifest_data
+                .get("name")
+                .and_then(|v| v.as_str())
+                .unwrap_or(manifest_id.as_deref().unwrap_or(""))
+                .to_string();
+            let id = manifest_id.unwrap_or_else(|| {
+                PathBuf::from(&path)
+                    .file_stem()
+                    .and_then(|s| s.to_str())
+                    .map(|s| s.to_string())
+                    .unwrap_or_default()
+            });
+            let version = manifest_version.unwrap_or_else(|| "0.1.0-dev".to_string());
+
+            db.register_plugin(&id, &name, &version, &permissions)?;
+            db.extract_plugin(app_data_dir, &id, &zip_data).map(|_| ())?;
+
+            return Ok(InstalledPluginInfo {
+                id,
+                name,
+                version,
+                permissions,
+                installed_at: chrono::Utc::now().to_rfc3339(),
+            });
+        }
+    }
+
+    Err("plugin-manifest.json not found in zip".to_string())
 }
 
 #[tauri::command]

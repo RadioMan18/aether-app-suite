@@ -72,6 +72,7 @@ export interface UsePluginManagerResult {
   catalogItems: StoreItem[];
   installedPlugins: PluginInfo[];
   installPlugin: (item: StoreItem) => Promise<void>;
+  installLocalPlugin: () => Promise<void>;
   uninstallPlugin: (id: string) => Promise<void>;
   refreshPlugins: () => Promise<void>;
   refreshCatalog: () => Promise<StoreItem[]>;
@@ -233,6 +234,35 @@ export function usePluginManager(): UsePluginManagerResult {
     }
   };
 
+  const installLocalPlugin = async () => {
+    console.log("[PluginManager] installLocalPlugin start");
+    setIsLoading(true);
+    setError(null);
+    try {
+      const open = (await import("@tauri-apps/plugin-dialog")).open;
+      const selected = await open({
+        multiple: false,
+        filters: [{ name: "Plugin Zip", extensions: ["zip"] }],
+      });
+      const filePath = typeof selected === "string" ? selected : selected?.[0];
+      if (!filePath) {
+        console.log("[PluginManager] installLocalPlugin cancelled");
+        return;
+      }
+      const result = await invoke<PluginInfo>("install_local_plugin", { path: filePath });
+      console.log("[PluginManager] install_local_plugin complete:", result.id);
+      await refreshPlugins();
+      await refreshCatalog();
+      console.log("[PluginManager] installLocalPlugin done:", result.id);
+    } catch (e) {
+      console.error("[PluginManager] installLocalPlugin error:", e);
+      setError(e instanceof Error ? e.message : String(e));
+      throw e;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
@@ -261,6 +291,7 @@ export function usePluginManager(): UsePluginManagerResult {
     catalogItems,
     installedPlugins,
     installPlugin,
+    installLocalPlugin,
     uninstallPlugin,
     refreshPlugins,
     refreshCatalog,
