@@ -1,21 +1,38 @@
 @import "tailwindcss";
+@import "./lib/design-system/tokens.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-canvas: var(--canvas);
-  --color-surface-1: var(--surface-1);
+  /* Legacy utility names mapped to aether palette */
+  --color-canvas: var(--aether-bg);
+  --color-surface-1: var(--aether-surface);
   --color-surface-2: var(--surface-2);
   --color-surface-3: var(--surface-3);
-  --color-border: var(--border);
-  --color-text-primary: var(--text-primary);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-muted: var(--text-muted);
-  --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
-  --color-success: var(--success);
-  --color-warning: var(--warning);
-  --color-danger: var(--danger);
+  --color-border: var(--aether-border);
+  --color-text-primary: var(--aether-text);
+  --color-text-secondary: var(--aether-text-muted);
+  --color-text-muted: var(--aether-text-muted);
+  --color-accent: var(--aether-primary);
+  --color-accent-hover: var(--aether-primary-hover);
+  --color-success: var(--aether-success);
+  --color-warning: var(--aether-warning);
+  --color-danger: var(--aether-error);
+
+  /* Semantic aether namespace */
+  --color-aether-bg: var(--aether-bg);
+  --color-aether-surface: var(--aether-surface);
+  --color-aether-border: var(--aether-border);
+  --color-aether-text: var(--aether-text);
+  --color-aether-text-muted: var(--aether-text-muted);
+  --color-aether-primary: var(--aether-primary);
+  --color-aether-primary-hover: var(--aether-primary-hover);
+  --color-aether-selected: var(--aether-selected);
+  --color-aether-selected-border: var(--aether-selected-border);
+  --color-aether-success: var(--aether-success);
+  --color-aether-warning: var(--aether-warning);
+  --color-aether-error: var(--aether-error);
+  --color-aether-info: var(--aether-info);
 
   --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -50,37 +67,17 @@
   }
 }
 
-:root {
-  --canvas: #040506;
-  --surface-1: #111214;
-  --surface-2: #1b1c1e;
-  --surface-3: #252628;
-  --border: #2e2f32;
-  --text-primary: #f0f0f0;
-  --text-secondary: #a0a0a0;
-  --text-muted: #6b6b6b;
-  --accent: #55b3ff;
-  --accent-hover: #7ac5ff;
-  --success: #5fc992;
-  --warning: #ffbc33;
-  --danger: #ff5f5f;
-
-  --sidebar-width: 260px;
-  --activity-bar-width: 64px;
-  --status-bar-height: 24px;
-}
-
 @layer base {
   *,
   ::after,
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--border);
+    border-color: var(--aether-border);
   }
   body {
-    background-color: var(--canvas);
-    color: var(--text-primary);
+    background-color: var(--aether-bg);
+    color: var(--aether-text);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

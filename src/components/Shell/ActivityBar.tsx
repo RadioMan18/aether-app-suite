@@ -9,8 +9,8 @@ interface ActivityBarProps {
 
 export function ActivityBar({ plugins, activePluginId, onPluginSelect }: ActivityBarProps) {
   return (
-    <aside className="flex h-full w-[var(--activity-bar-width)] flex-col items-center border-r border-border bg-surface-1 py-3">
-      <div className="mb-4 flex h-8 w-8 items-center justify-center rounded-lg bg-accent/10 text-accent">
+    <aside className="flex h-full w-[var(--activity-bar-width)] flex-col items-center border-r border-aether-border bg-aether-surface py-3">
+      <div className="mb-4 flex h-8 w-8 items-center justify-center rounded-lg bg-aether-primary/10 text-aether-primary">
         <span className="text-lg font-bold">A</span>
       </div>
 
@@ -25,8 +25,8 @@ export function ActivityBar({ plugins, activePluginId, onPluginSelect }: Activit
               className={cn(
                 "flex h-10 w-10 items-center justify-center rounded-lg transition-colors duration-150",
                 isActive
-                  ? "bg-accent/10 text-accent"
-                  : "text-text-muted hover:bg-surface-2 hover:text-text-primary"
+                  ? "bg-aether-primary/10 text-aether-primary"
+                  : "text-aether-text-muted hover:bg-surface-2 hover:text-aether-text"
               )}
             >
               <span className="text-xl" role="img" aria-label={plugin.name}>

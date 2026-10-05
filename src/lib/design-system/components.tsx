@@ -3,16 +3,16 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aether-primary focus-visible:ring-offset-2 focus-visible:ring-offset-aether-bg disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-accent text-canvas hover:bg-accent-hover",
+        default: "bg-aether-primary text-aether-primary-fg hover:bg-aether-primary-hover",
         secondary:
-          "bg-surface-2 text-text-primary border border-border hover:bg-surface-3",
-        ghost: "hover:bg-surface-2 text-text-secondary hover:text-text-primary",
+          "bg-surface-2 text-aether-text border border-aether-border hover:bg-surface-3",
+        ghost: "hover:bg-surface-2 text-aether-text-muted hover:text-aether-text",
         destructive:
-          "bg-danger text-white hover:bg-danger/90",
+          "bg-aether-error text-white hover:bg-aether-error/90",
       },
       size: {
         default: "h-9 px-4 py-2 text-sm",
@@ -48,12 +48,12 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 const inputVariants = cva(
-  "flex h-9 w-full rounded-md border border-border bg-surface-1 px-3 py-1 text-sm text-text-primary placeholder:text-text-muted transition-colors duration-150 file:border-0 file:bg-transparent file:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-50",
+  "flex h-9 w-full rounded-md border border-aether-border bg-aether-surface px-3 py-1 text-sm text-aether-text placeholder:text-aether-text-muted transition-colors duration-150 file:border-0 file:bg-transparent file:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aether-primary focus-visible:ring-offset-2 focus-visible:ring-offset-aether-bg disabled:cursor-not-allowed disabled:opacity-50",
   {
     variants: {
       variant: {
         default: "",
-        error: "border-danger focus-visible:ring-danger",
+        error: "border-aether-error focus-visible:ring-aether-error",
       },
     },
     defaultVariants: {
@@ -80,7 +80,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 Input.displayName = "Input";
 
 const cardVariants = cva(
-  "rounded-lg border border-border bg-surface-1 text-text-primary shadow-sm",
+  "rounded-lg border border-aether-border bg-aether-surface text-aether-text shadow-sm",
   {
     variants: {
       variant: {
@@ -115,12 +115,12 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-accent/10 text-accent border-accent/20",
+        default: "bg-aether-primary/10 text-aether-primary border-aether-primary/20",
         secondary:
-          "bg-surface-2 text-text-secondary border-border",
-        success: "bg-success/10 text-success border-success/20",
-        warning: "bg-warning/10 text-warning border-warning/20",
-        danger: "bg-danger/10 text-danger border-danger/20",
+          "bg-surface-2 text-aether-text-muted border-aether-border",
+        success: "bg-aether-success/10 text-aether-success border-aether-success/20",
+        warning: "bg-aether-warning/10 text-aether-warning border-aether-warning/20",
+        danger: "bg-aether-error/10 text-aether-error border-aether-error/20",
       },
     },
     defaultVariants: {

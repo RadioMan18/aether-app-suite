@@ -15,10 +15,10 @@ export function PluginCard({ item, onSelect, onInstall, onUninstall, isSelected 
     <div
       onClick={onSelect}
       className={[
-        "group flex cursor-pointer flex-col rounded-lg border bg-surface-1 p-4 transition-all duration-150",
+        "group flex cursor-pointer flex-col rounded-lg border bg-aether-surface p-4 transition-all duration-150",
         isSelected
-          ? "border-accent ring-1 ring-accent"
-          : "border-border hover:border-text-muted/30 hover:bg-surface-2",
+          ? "border-aether-primary ring-1 ring-aether-primary"
+          : "border-aether-border hover:border-aether-text-muted/30 hover:bg-surface-2",
       ].join(" ")}
     >
       <div className="flex items-start justify-between">
@@ -27,24 +27,24 @@ export function PluginCard({ item, onSelect, onInstall, onUninstall, isSelected 
             {item.icon}
           </span>
           <div>
-            <h3 className="text-sm font-medium text-text-primary">{item.name}</h3>
-            <p className="text-xs text-text-muted">v{item.version} by {item.author}</p>
+            <h3 className="text-sm font-medium text-aether-text">{item.name}</h3>
+            <p className="text-xs text-aether-text-muted">v{item.version} by {item.author}</p>
           </div>
         </div>
-        <div className="flex items-center gap-1 text-xs text-text-secondary">
-          <Star className="h-3 w-3 fill-warning text-warning" />
+        <div className="flex items-center gap-1 text-xs text-aether-text-muted">
+          <Star className="h-3 w-3 fill-aether-warning text-aether-warning" />
           <span>{(item.rating ?? 0).toFixed(1)}</span>
         </div>
       </div>
 
-      <p className="mt-3 line-clamp-2 text-sm text-text-secondary">{item.description}</p>
+      <p className="mt-3 line-clamp-2 text-sm text-aether-text-muted">{item.description}</p>
 
       <div className="mt-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Badge variant="secondary" className="capitalize">
             {item.category.replace("-", " ")}
           </Badge>
-          <span className="text-xs text-text-muted">
+          <span className="text-xs text-aether-text-muted">
             {(item.downloads ?? 0).toLocaleString()} downloads
           </span>
         </div>
@@ -59,7 +59,7 @@ export function PluginCard({ item, onSelect, onInstall, onUninstall, isSelected 
                     console.log("[PluginCard] Update click:", item.id);
                     onInstall();
                   }}
-                  className="flex items-center gap-1.5 rounded-md bg-accent/10 px-2.5 py-1.5 text-xs font-medium text-accent transition-colors duration-150 hover:bg-accent/20"
+                  className="flex items-center gap-1.5 rounded-md bg-aether-primary/10 px-2.5 py-1.5 text-xs font-medium text-aether-primary transition-colors duration-150 hover:bg-aether-primary/20"
                 >
                   <RefreshCw className="h-3 w-3" />
                   Update
@@ -71,7 +71,7 @@ export function PluginCard({ item, onSelect, onInstall, onUninstall, isSelected 
                   console.log("[PluginCard] Remove click:", item.id);
                   onUninstall();
                 }}
-                className="flex items-center gap-1.5 rounded-md bg-danger/10 px-2.5 py-1.5 text-xs font-medium text-danger transition-colors duration-150 hover:bg-danger/20"
+                className="flex items-center gap-1.5 rounded-md bg-aether-error/10 px-2.5 py-1.5 text-xs font-medium text-aether-error transition-colors duration-150 hover:bg-aether-error/20"
               >
                 <Trash2 className="h-3 w-3" />
                 Remove
@@ -84,7 +84,7 @@ export function PluginCard({ item, onSelect, onInstall, onUninstall, isSelected 
                 console.log("[PluginCard] Install click:", item.id);
                 onInstall();
               }}
-              className="flex items-center gap-1.5 rounded-md bg-accent px-2.5 py-1.5 text-xs font-medium text-canvas transition-colors duration-150 hover:bg-accent-hover"
+              className="flex items-center gap-1.5 rounded-md bg-aether-primary px-2.5 py-1.5 text-xs font-medium text-aether-bg transition-colors duration-150 hover:bg-aether-primary-hover"
             >
               <Download className="h-3 w-3" />
               Install

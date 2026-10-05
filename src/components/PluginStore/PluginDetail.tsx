@@ -19,11 +19,11 @@ export function PluginDetail({ item, onClose, onInstall, onUninstall }: PluginDe
       transition={{ duration: 0.2, ease: "easeOut" }}
       className="flex h-full flex-col"
     >
-      <div className="flex items-center justify-between border-b border-border px-5 py-4">
-        <h2 className="text-base font-semibold text-text-primary">Plugin Details</h2>
+      <div className="flex items-center justify-between border-b border-aether-border px-5 py-4">
+        <h2 className="text-base font-semibold text-aether-text">Plugin Details</h2>
         <button
           onClick={onClose}
-          className="flex h-7 w-7 items-center justify-center rounded-md text-text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-text-primary"
+          className="flex h-7 w-7 items-center justify-center rounded-md text-aether-text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-aether-text"
           aria-label="Close details"
         >
           <X className="h-4 w-4" />
@@ -36,19 +36,19 @@ export function PluginDetail({ item, onClose, onInstall, onUninstall }: PluginDe
             {item.icon}
           </span>
           <div>
-            <h3 className="text-lg font-semibold text-text-primary">{item.name}</h3>
-            <p className="text-sm text-text-secondary">
+            <h3 className="text-lg font-semibold text-aether-text">{item.name}</h3>
+            <p className="text-sm text-aether-text-muted">
               v{item.version} by {item.author}
             </p>
           </div>
         </div>
 
         <div className="mt-4 flex items-center gap-3">
-          <div className="flex items-center gap-1 text-sm text-text-secondary">
-            <Star className="h-4 w-4 fill-warning text-warning" />
+          <div className="flex items-center gap-1 text-sm text-aether-text-muted">
+            <Star className="h-4 w-4 fill-aether-warning text-aether-warning" />
             <span>{item.rating}</span>
           </div>
-          <span className="text-sm text-text-muted">
+          <span className="text-sm text-aether-text-muted">
             {item.downloads.toLocaleString()} downloads
           </span>
           <Badge variant="secondary" className="capitalize">
@@ -57,20 +57,20 @@ export function PluginDetail({ item, onClose, onInstall, onUninstall }: PluginDe
         </div>
 
         <div className="mt-6">
-          <h4 className="text-sm font-medium text-text-primary">Description</h4>
-          <p className="mt-1.5 text-sm text-text-secondary">{item.description}</p>
+          <h4 className="text-sm font-medium text-aether-text">Description</h4>
+          <p className="mt-1.5 text-sm text-aether-text-muted">{item.description}</p>
         </div>
 
         {item.changelog && (
           <div className="mt-6">
-            <h4 className="text-sm font-medium text-text-primary">What&apos;s New</h4>
-            <p className="mt-1.5 text-sm text-text-secondary">{item.changelog}</p>
+            <h4 className="text-sm font-medium text-aether-text">What&apos;s New</h4>
+            <p className="mt-1.5 text-sm text-aether-text-muted">{item.changelog}</p>
           </div>
         )}
 
         <div className="mt-6">
-          <h4 className="flex items-center gap-2 text-sm font-medium text-text-primary">
-            <Shield className="h-4 w-4 text-text-muted" />
+          <h4 className="flex items-center gap-2 text-sm font-medium text-aether-text">
+            <Shield className="h-4 w-4 text-aether-text-muted" />
             Permissions
           </h4>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -83,7 +83,7 @@ export function PluginDetail({ item, onClose, onInstall, onUninstall }: PluginDe
         </div>
       </div>
 
-      <div className="border-t border-border px-5 py-4">
+      <div className="border-t border-aether-border px-5 py-4">
         {item.installed ? (
           <div className="flex items-center gap-3">
             {item.updateAvailable && (
@@ -93,7 +93,7 @@ export function PluginDetail({ item, onClose, onInstall, onUninstall }: PluginDe
                   console.log("[PluginDetail] Update click:", item.id);
                   onInstall();
                 }}
-                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-canvas transition-colors duration-150 hover:bg-accent-hover"
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-aether-primary px-4 py-2 text-sm font-medium text-aether-bg transition-colors duration-150 hover:bg-aether-primary-hover"
               >
                 <RefreshCw className="h-4 w-4" />
                 Update Plugin
@@ -105,7 +105,7 @@ export function PluginDetail({ item, onClose, onInstall, onUninstall }: PluginDe
                 console.log("[PluginDetail] Uninstall click:", item.id);
                 onUninstall();
               }}
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-danger/10 px-4 py-2 text-sm font-medium text-danger transition-colors duration-150 hover:bg-danger/20"
+              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-aether-error/10 px-4 py-2 text-sm font-medium text-aether-error transition-colors duration-150 hover:bg-aether-error/20"
             >
               <Trash2 className="h-4 w-4" />
               Uninstall
@@ -118,7 +118,7 @@ export function PluginDetail({ item, onClose, onInstall, onUninstall }: PluginDe
               console.log("[PluginDetail] Install click:", item.id);
               onInstall();
             }}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-canvas transition-colors duration-150 hover:bg-accent-hover"
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-aether-primary px-4 py-2 text-sm font-medium text-aether-bg transition-colors duration-150 hover:bg-aether-primary-hover"
           >
             <Download className="h-4 w-4" />
             Install Plugin

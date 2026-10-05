@@ -82,7 +82,7 @@ export function CommandPalette({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -12 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="relative w-full max-w-xl overflow-hidden rounded-lg border border-border bg-surface-1 shadow-2xl"
+            className="relative w-full max-w-xl overflow-hidden rounded-lg border border-aether-border bg-aether-surface shadow-2xl"
           >
             <CommandInput query={query} onQueryChange={setQuery} />
             <CommandResults

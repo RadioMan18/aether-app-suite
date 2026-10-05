@@ -23,7 +23,7 @@ function TooltipContent({
       <TooltipPrimitive.Content
         sideOffset={sideOffset}
         className={cn(
-          "z-50 overflow-hidden rounded-md border border-border bg-surface-2 px-3 py-1.5 text-sm text-text-primary shadow-md",
+          "z-50 overflow-hidden rounded-md border border-aether-border bg-surface-2 px-3 py-1.5 text-sm text-aether-text shadow-md",
           "data-[state=open]:animate-in data-[state=closed]:animate-out",
           "data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2",
           "data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2",

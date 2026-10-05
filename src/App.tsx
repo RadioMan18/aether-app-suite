@@ -129,7 +129,7 @@ function App() {
   console.log("[App] render storeItems:", storeItems.map((i) => i.id + ":" + i.installed).join(","));
 
   return (
-    <div className="flex h-screen w-screen flex-col overflow-hidden bg-canvas text-text-primary">
+    <div className="flex h-screen w-screen flex-col overflow-hidden bg-aether-bg text-aether-text">
       <CustomTitleBar />
       <div className="flex flex-1 overflow-hidden">
         <ActivityBar

@@ -8,14 +8,14 @@ interface StatusBarProps {
 
 export function StatusBar({ shell, clipboardStreaming }: StatusBarProps) {
   return (
-    <footer className="flex h-[var(--status-bar-height)] w-full items-center justify-between border-t border-border bg-surface-1 px-4 text-xs text-text-muted">
+    <footer className="flex h-[var(--status-bar-height)] w-full items-center justify-between border-t border-aether-border bg-aether-surface px-4 text-xs text-aether-text-muted">
       <div className="flex items-center gap-4">
         <span className="flex items-center gap-1.5">
-          <Lock className="h-3.5 w-3.5 text-success" />
+          <Lock className="h-3.5 w-3.5 text-aether-success" />
           Encrypted
         </span>
         <span className="flex items-center gap-1.5">
-          <Cloud className="h-3.5 w-3.5 text-text-muted" />
+          <Cloud className="h-3.5 w-3.5 text-aether-text-muted" />
           Synced
         </span>
         <span className="flex items-center gap-1.5">
@@ -23,7 +23,7 @@ export function StatusBar({ shell, clipboardStreaming }: StatusBarProps) {
           {shell.installedPluginCount} plugins
         </span>
         {clipboardStreaming && (
-          <span className="flex items-center gap-1.5 text-success">
+          <span className="flex items-center gap-1.5 text-aether-success">
             <Clipboard className="h-3.5 w-3.5" />
             Clipboard streaming active
           </span>

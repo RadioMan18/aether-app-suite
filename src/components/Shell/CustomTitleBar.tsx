@@ -65,30 +65,30 @@ export function CustomTitleBar() {
   return (
     <div
       data-tauri-drag-region
-      className="flex h-8 w-full select-none items-center justify-between border-b border-border bg-surface-1"
+      className="flex h-8 w-full select-none items-center justify-between border-b border-aether-border bg-aether-surface"
     >
       <div className="flex items-center gap-2 px-3" data-tauri-drag-region>
-        <span className="text-sm font-medium text-text-primary">Nidus</span>
+        <span className="text-sm font-medium text-aether-text">Nidus</span>
       </div>
 
       <div className="flex items-center">
         <button
           onClick={handleMinimize}
-          className="flex h-8 w-10 items-center justify-center text-text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-text-primary"
+          className="flex h-8 w-10 items-center justify-center text-aether-text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-aether-text"
           aria-label="Minimize"
         >
           <Minus className="h-3.5 w-3.5" />
         </button>
         <button
           onClick={handleMaximize}
-          className="flex h-8 w-10 items-center justify-center text-text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-text-primary"
+          className="flex h-8 w-10 items-center justify-center text-aether-text-muted transition-colors duration-150 hover:bg-surface-2 hover:text-aether-text"
           aria-label={isMaximized ? "Restore" : "Maximize"}
         >
           <Square className="h-3 w-3" />
         </button>
         <button
           onClick={handleClose}
-          className="flex h-8 w-10 items-center justify-center text-text-muted transition-colors duration-150 hover:bg-danger hover:text-white"
+          className="flex h-8 w-10 items-center justify-center text-aether-text-muted transition-colors duration-150 hover:bg-aether-error hover:text-white"
           aria-label="Close"
         >
           <X className="h-3.5 w-3.5" />

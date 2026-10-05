@@ -1,22 +1,24 @@
 :root {
-  /* Surfaces */
-  --canvas: #040506;
-  --surface-1: #111214;
-  --surface-2: #1b1c1e;
-  --surface-3: #252628;
-  --border: #2e2f32;
+  /* Aether Palette - Light Mode */
+  --aether-bg: #FAF8F5;
+  --aether-surface: #FFFFFF;
+  --aether-border: #E8E3DC;
+  --aether-text: #2D3139;
+  --aether-text-muted: #737880;
+  --aether-primary: #7BB3E8;
+  --aether-primary-hover: #639FD8;
+  --aether-primary-fg: #0F2840;
+  --aether-selected: #A4D8B8;
+  --aether-selected-border: #6EC08E;
+  --aether-selected-fg: #133821;
+  --aether-success: #88CF9E;
+  --aether-warning: #F5CD79;
+  --aether-error: #F29393;
+  --aether-info: #A3ABB5;
 
-  /* Typography */
-  --text-primary: #f0f0f0;
-  --text-secondary: #a0a0a0;
-  --text-muted: #6b6b6b;
-
-  /* Accents */
-  --accent: #55b3ff;
-  --accent-hover: #7ac5ff;
-  --success: #5fc992;
-  --warning: #ffbc33;
-  --danger: #ff5f5f;
+  /* Derived surfaces for elevation */
+  --surface-2: #F5F3F0;
+  --surface-3: #EDEAE5;
 
   /* Spacing */
   --sidebar-width: 260px;
@@ -44,4 +46,27 @@
   --duration-normal: 250ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+.dark {
+  /* Aether Palette - Dark Mode */
+  --aether-bg: #16181B;
+  --aether-surface: #202328;
+  --aether-border: #31363F;
+  --aether-text: #F1F3F5;
+  --aether-text-muted: #9BA1A9;
+  --aether-primary: #82BCF4;
+  --aether-primary-hover: #98C8F7;
+  --aether-primary-fg: #09192A;
+  --aether-selected: #345C44;
+  --aether-selected-border: #72C993;
+  --aether-selected-fg: #E1F7EA;
+  --aether-success: #63B87E;
+  --aether-warning: #E2B350;
+  --aether-error: #E06C6C;
+  --aether-info: #6E7681;
+
+  /* Derived surfaces for elevation */
+  --surface-2: #1a1c1f;
+  --surface-3: #282a2d;
 }
